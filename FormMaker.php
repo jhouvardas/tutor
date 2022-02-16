@@ -696,8 +696,8 @@ class FormMaker {
                 $studentsResource = $db->getStudentsWithLesson();
                 while ($row = $studentsResource->fetch_assoc()) {
                     ?>
-                <input type="hidden" value="<?php $row['studentId'] ?>">
-                <tr><td> <?php echo $row['name'] ?> </td><td><button  class="btn btn-success" onclick = "document.location = 'index.php?action=lesson'">Μάθημα</button></td><td><button class="btn btn-danger" onclick = "document.location = 'index.php?action=apousia'">Απουσία</button></td></tr>
+            <!--<input type="hidden" name="studentId" value="<?php // $row['studentId'] ?>">-->
+                <tr><td> <?php echo $row['name'] ?> </td><td><button  class="btn btn-success" onclick = "document.location = 'index.php?action=lesson&studentId=<?php echo $row['studentId']; ?>'">Μάθημα</button></td><td><button class="btn btn-danger" onclick = "document.location = 'index.php?action=apousia&studentId=<?php echo $row['studentId']; ?>'">Απουσία</button></td></tr>
                 <?php
             }
             ?>
@@ -923,8 +923,10 @@ class FormMaker {
                 echo '<option value="6974004099">Όλοι</option>';
                 while ($row = $result->fetch_assoc()) {
                     $studentId = $row['studentId'];
-                    if ($studentId == $_POST['studentId']) {
+                    if ($studentId == $_GET['studentId']) {
                         $selected = 'selected';
+                    }else{
+                        $selected ='';
                     }
                     echo'<option value= "' . $studentId . ' " ' . $selected . '>' . $row['name'] . ' ' . $row['lastName'] . '</option>';
                 }
