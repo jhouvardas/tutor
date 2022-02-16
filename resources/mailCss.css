@@ -1,0 +1,21 @@
+#mail {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 50%;
+}
+
+#mail td, #mail th {
+  /*border: 1px solid #ddd;*/
+  padding: 8px;
+}
+
+#mail tr:nth-child(even){background-color: #f2f2f2;}
+
+
+#mail th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: yellowgreen;
+  color: black;
+}
