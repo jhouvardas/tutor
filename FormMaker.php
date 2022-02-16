@@ -125,10 +125,10 @@ class FormMaker {
         </div>  
         <?php
     }
-    
+
     public function addAskiseisGroup() {
         ?>
-         <h5>Εισαγωγή Ομάδας Ασκήσεων</h5>
+        <h5>Εισαγωγή Ομάδας Ασκήσεων</h5>
         <div class="container">  
             <form action="<?php htmlspecialchars($_SERVER[PHP_SELF]) ?> " method="post" class="bg-light text-dark">  
                 <div class="form-group">         
@@ -140,6 +140,7 @@ class FormMaker {
         </div>  
         <?php
     }
+
     public function addGroupDetailsForm() {
         ?>
         <h5>Εισαγωγή ασκήσεων σε Ομάδα</h5>
@@ -158,6 +159,7 @@ class FormMaker {
         </div>  
         <?php
     }
+
     public function addAskiseisToGroupForm() {
         ?>
         <div class="container">  
@@ -173,7 +175,6 @@ class FormMaker {
         </div>
         <?php
     }
-    
 
     public function addAskiseisToErgasiaForm() {
         ?>
@@ -305,14 +306,14 @@ class FormMaker {
         </div>  
         <?php
     }
-    
+
     public function addPanelliniesToGroupForm() {
         ?>
         <h5>Εισαγωγή Άσκησης Πανελληνίων</h5>
         <div class="container">  
             <form action="<?php htmlspecialchars($_SERVER[PHP_SELF]) ?> " method="post" class="bg-light text-dark">  
                 <?php
-                $groupType=1;
+                $groupType = 1;
                 $this->selectGroup($groupType);
                 $this->selectPanelliniesYear();
                 $this->selectThema();
@@ -344,7 +345,6 @@ class FormMaker {
         </div>  
         <?php
     }
-
 
     public function addLessonForm() {
         ?>
@@ -438,7 +438,7 @@ class FormMaker {
                         <div class="form-group">
                             <button type="submit" class="btn btn-success" name="deleteTimeTable">Διαγραφή</button>
                         </div>
-                    2</div>
+                        2</div>
                 </div>
             </form>                
         </div>  
@@ -665,47 +665,18 @@ class FormMaker {
         </div>  
         <?php
     }
-    
-    public function displayAskiseisGroupForm($groupType){
+
+    public function displayAskiseisGroupForm($groupType) {
         ?>
         <h5>Αναζήτηση Ομάδας Ασκήσεων</h5>
         <div class="container">  
             <form action="<?php htmlspecialchars($_SERVER[PHP_SELF]) ?> " method="post" class="bg-light text-dark" >  
                 <?php
-                        $this->selectGroup($groupType);
+                $this->selectGroup($groupType);
                 ?>
                 <button type="submit" class="btn btn-success" name="displayGroup">Επιλογή</button>                  
             </form>                
         </div>  
-        <?php
-    }
-
-    public function frontPageFormNOTINUSE() {
-        $db = new DbHandler();
-        ?>
-        <!--<div class="container">-->  
-        <h5>Ημερήσιο Πρόγραμμα</h5>
-        <form action="<?php htmlspecialchars($_SERVER[PHP_SELF]) ?> "  method="post" class="bg-light text-dark">  
-            <!--<div class="table-responsive-sm">-->
-            <table class="table table-borderless table-striped">
-                <thead class="table-success">
-                    <tr><th>Όνομα</th><th></th><th></th></tr>
-                </thead>
-
-                <tbody>
-                    <?php
-                    $studentsResource = $db->getStudentsWithLesson();
-                    while ($row = $studentsResource->fetch_assoc()) {
-                        echo'<tr><td>' . $row['name'] . '</td><td><button  class="btn btn-success" type = "submit" name ="addLesson" value = "' . $row['studentId'] . '">Μάθημα</button></td><td><button type="button" class="btn btn-danger" type = "submit" name ="addApusia" value = "' . $row['studentId'] . '">Απουσία</button></td></tr>';
-                    }
-                    ?>
-                    <!--<button type="submit" class="btn btn-success" name="updateStudent">Υποβολή</button>-->   
-                </tbody>
-            </table>
-
-            <!--</div>-->
-        </form>  
-        <!--</div>-->  
         <?php
     }
 
@@ -725,40 +696,13 @@ class FormMaker {
                 $studentsResource = $db->getStudentsWithLesson();
                 while ($row = $studentsResource->fetch_assoc()) {
                     ?>
-                    <tr><td> <?php echo $row['name'] ?> </td><td><button  class="btn btn-success" onclick = "document.location = 'index.php?action=lesson'">Μάθημα</button></td><td><button class="btn btn-danger" onclick = "document.location = 'index.php?action=apousia'">Απουσία</button></td></tr>
-                    <?php
-                }
-                ?>
-                <!--<button type="submit" class="btn btn-success" name="updateStudent">Υποβολή</button>-->   
-            </tbody>
-        </table>
-
-        <!--</div>-->
-
-        <!--</div>-->  
-        <?php
-    }
-
-    public function frontPageForm2() {
-        $db = new DbHandler();
-        ?>
-        <!--<div class="container">-->  
-        <h5 >Ημερήσιο Πρόγραμμα</h5>
-        <table class="table table-borderless table-striped">
-            <thead class="table-success">
-                <tr><th>Όνομα</th><th></th><th></th></tr>
-            </thead>
-            <tbody>
+                <input type="hidden" value="<?php $row['studentId'] ?>">
+                <tr><td> <?php echo $row['name'] ?> </td><td><button  class="btn btn-success" onclick = "document.location = 'index.php?action=lesson'">Μάθημα</button></td><td><button class="btn btn-danger" onclick = "document.location = 'index.php?action=apousia'">Απουσία</button></td></tr>
                 <?php
-                $studentsResource = $db->getStudentsWithLesson();
-                while ($row = $studentsResource->fetch_assoc()) {
-                    ?>
-                    <tr><td> <?php echo $row['name'] ?> </td><td><button  class="btn btn-success" onclick = "document.location = 'index.php?action=lesson'">Μάθημα</button></td><td><button class="btn btn-danger" onclick = "document.location = 'index.php?action=apousia'">Απουσία</button></td></tr>
-                    <?php
-                }
-                ?>
-                <!--<button type="submit" class="btn btn-success" name="updateStudent">Υποβολή</button>-->   
-            </tbody>
+            }
+            ?>
+            <!--<button type="submit" class="btn btn-success" name="updateStudent">Υποβολή</button>-->   
+        </tbody>
         </table>
 
         <!--</div>-->
@@ -854,7 +798,7 @@ class FormMaker {
         </div>  
         <?php
     }
-    
+
     public function getPanelliniesInGroupForm() {
         ?>
         <h5>Αναζήτηση Πανελληνίων</h5>
@@ -869,7 +813,6 @@ class FormMaker {
         </div>  
         <?php
     }
-
 
     public function getStudentTheoriaForm() {
         ?>
@@ -949,8 +892,6 @@ class FormMaker {
         </div>
         <?php
     }
-    
-   
 
     public function selectPaymentToDeleteInTransactions() {
         $paymentsList = new DbHandler;
@@ -992,7 +933,7 @@ class FormMaker {
         </div>
         <?php
     }
-    
+
     public function selectGroup($groupType) {
         $groupList = new DbHandler();
         ?>
@@ -1001,20 +942,19 @@ class FormMaker {
             <select class="form-control" id="askiseisGroupId" name="askiseisGroupId" required>             
                 <?php
                 $result = $groupList->getGroups($groupType);
-                echo '<option value=""></option>';               
+                echo '<option value=""></option>';
                 while ($row = $result->fetch_assoc()) {
                     $askiseisGroupId = $row['askiseisGroupId'];
                     if ($askiseisGroupId == $_POST['askiseisGroupId']) {
                         $selected = 'selected';
                     }
-                    echo'<option value= "' . $askiseisGroupId . ' " ' . $selected . '>' . $row['askiseisGroupName'] .  '</option>';
+                    echo'<option value= "' . $askiseisGroupId . ' " ' . $selected . '>' . $row['askiseisGroupName'] . '</option>';
                 }
                 ?>
             </select>             
         </div>
         <?php
     }
-    
 
     public function selectPanelliniesYear() {
         ?>
