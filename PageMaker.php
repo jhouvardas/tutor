@@ -17,8 +17,7 @@ class PageMaker {
                 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
                 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-                <link rel="icon" href="images/favicon.jpg" sizes="16x16" type="image/jpg">
-                <script src="myJavaScripts.js.js"></script> 
+                <link rel="icon" href="images/favicon.jpg" sizes="16x16" type="image/jpg">              
                 <script src="https://cdn.tiny.cloud/1/00egprfeg5a0fti37lygyyjkx7k4qrv5y3mm1d208ebhi99j/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
                 <script>
                     tinymce.init({
