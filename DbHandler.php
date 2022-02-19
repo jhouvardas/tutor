@@ -65,7 +65,7 @@ class DbHandler {
         $conn = $this->connect();
         $panellinies=$groupType;
         $sql = "SELECT * FROM tutor_askiseisGroup WHERE panellinies = $panellinies ORDER BY askiseisGroupName ASC";
-        echo $sql;
+//        echo $sql;
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             return $result;
@@ -235,7 +235,7 @@ class DbHandler {
         $timeTo = $_POST['timeTo'];
         $sql = "UPDATE tutor_timeTable SET timeFrom='$timeFrom',timeTo='$timeTo' WHERE studentId = $studentId AND DAYOFWEEK(date) = DAYOFWEEK('$date') AND date >= '$date';";
         $result = $conn->query($sql);
-        echo $sql;
+//        echo $sql;
         if ($result->num_rows > 0) {
             echo 'Η αλλαγή έγινε';
         } else {
@@ -252,9 +252,9 @@ class DbHandler {
         $timeFrom = $row['timeFrom'];
         $timeTo = $row['timeTo'];
         $sql = "DELETE FROM tutor_timeTable WHERE timeFrom='$timeFrom' AND timeTo='$timeTo' AND studentId = $studentId AND DAYOFWEEK(date) = DAYOFWEEK('$date') AND date >= '$date';";
-        echo $sql;
+//        echo $sql;
         $result = $conn->query($sql);
-        echo $sql;
+//        echo $sql;
         if ($result->num_rows > 0) {
             echo 'Η διαγραφή έγινε';
         } else {
@@ -553,7 +553,7 @@ class DbHandler {
         $lykeio = $_POST['lykeio'];
         if (isset($askiseisGroupId) && isset($_POST['panelliniesToGroup'])) {
             $sql = "INSERT INTO askiseis(studentId,location,date,panelliniesYear,thema,erotima,period,lykeio,askiseisSource) VALUES (50,'',CURDATE(),$panelliniesYear,'$thema','$erotima','$period','$lykeio','Πανελλήνιες')";
-            echo $sql;
+//            echo $sql;
             if ($conn->query($sql) === TRUE) {
                 echo "Προστέθηκαν οι Πανελλήνιες";
             } else {
@@ -758,7 +758,7 @@ class DbHandler {
         $conn = $this->connect();
         $groupId = $_POST['askiseisGroupId'];
         $sql = "SELECT * FROM tutor_askiseisInGroup WHERE askiseisGroupId = $groupId";
-        echo $sql;
+//        echo $sql;
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {            
             return $result;
