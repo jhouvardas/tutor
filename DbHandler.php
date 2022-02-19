@@ -49,7 +49,10 @@ class DbHandler {
 
     public function getStudentsDetails() {
         $conn = $this->connect();
-        $sql = "SELECT * FROM student WHERE status = 1 ORDER BY name ASC";
+        session_start();
+        $user = $_SESSION['name'];
+        $sql = "SELECT * FROM student WHERE status = 1   ORDER BY name ASC";
+//        echo $sql;
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             return $result;
@@ -85,6 +88,8 @@ class DbHandler {
 
     public function getStudents() {
         $conn = $this->connect();
+        session_start();
+        $user = $_SESSION['user'];
         $sql = "SELECT studentId,name,lastName,(SELECT SUM(duration) FROM lesson WHERE lesson.studentId = student.studentId)AS dur,(SELECT SUM(payment) FROM lesson WHERE lesson.studentId = student.studentId)AS pay FROM student WHERE status = 1 ORDER BY name";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
@@ -96,7 +101,10 @@ class DbHandler {
 
     public function getAllStudents() {
         $conn = $this->connect();
-        $sql = "SELECT * FROM student ORDER BY name";
+        session_start();
+        $user = $_SESSION['user'];
+        $sql = "SELECT * FROM student  ORDER BY name";// 
+        echo $sql;
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             return $result;
