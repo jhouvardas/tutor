@@ -161,7 +161,11 @@ $page->displayHeadMatter();
                 case 'payment':
                     $form->addPaymentForm();
                     $db->addPayment();
-                    $db->addPaymentToTransactions(); //προσθέτει την πληρωμή στην εφαρμογή Έσοδα Έξοδα
+                    session_start();
+                    $user = $_SESSION['name'];
+                    if($user == 'jhouv' || $user == 'jhouv2023'){
+                        $db->addPaymentToTransactions(); //προσθέτει την πληρωμή στην εφαρμογή Έσοδα Έξοδα
+                    }                    
                     ?>
                     <script>
                         if (window.history.replaceState) {

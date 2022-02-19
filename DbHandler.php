@@ -290,7 +290,7 @@ class DbHandler {
         session_start();
         $user = $_SESSION['name'];
         if (isset($name) && $name != '') {
-            $sql = "INSERT INTO student (name,lastName,address,birthday,school,telephone,email,user) VALUES ('$name','$lastName ',' $address ',' $birthday ','$school','$telephone','$email'.'$user')";
+            $sql = "INSERT INTO student (name,lastName,address,birthday,school,telephone,email,user) VALUES ('$name','$lastName ',' $address ',' $birthday ','$school','$telephone','$email','$user')";
             if ($conn->query($sql) === TRUE) {
                 echo "Προστέθηκε ο Μαθητής";
             } else {
