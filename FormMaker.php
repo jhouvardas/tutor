@@ -833,7 +833,7 @@ class FormMaker {
         ?>
         <div class="form-group">  
             <label for="date">Ημερομηνία:</label>             
-            <input type="date" class="form-control" id="date" placeholder="Ημερομηνία" name="date" required>  
+            <input type="date" class="form-control" id="date" value="<?php echo date("Y-m-d"); ?>" name="date" required>  
         </div> 
         <?php
     }
