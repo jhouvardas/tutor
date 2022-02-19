@@ -171,7 +171,9 @@ class DbHandler {
     public function getOneDayTimeTable() {
         $conn = $this->connect();
         $date = $_POST['date'];
-        $sql = "SELECT name,lastName,tutor_timeTable.timeFrom FROM student INNER JOIN tutor_timeTable ON student.studentId = tutor_timeTable.studentId  WHERE tutor_timeTable.date ='$date' ORDER BY tutor_timeTable.timeFrom";
+        session_start();
+        $user = $_SESSION['name'];
+        $sql = "SELECT name,lastName,tutor_timeTable.timeFrom FROM student INNER JOIN tutor_timeTable ON student.studentId = tutor_timeTable.studentId  WHERE tutor_timeTable.date ='$date' AND student.user = '$user' ORDER BY tutor_timeTable.timeFrom";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             return $result;
