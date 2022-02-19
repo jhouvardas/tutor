@@ -51,7 +51,7 @@ class DbHandler {
         $conn = $this->connect();
         session_start();
         $user = $_SESSION['name'];
-        $sql = "SELECT * FROM student WHERE status = 1   ORDER BY name ASC";
+        $sql = "SELECT * FROM student WHERE status = 1 AND user = '$user' ORDER BY name ASC";
 //        echo $sql;
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
@@ -89,8 +89,8 @@ class DbHandler {
     public function getStudents() {
         $conn = $this->connect();
         session_start();
-        $user = $_SESSION['user'];
-        $sql = "SELECT studentId,name,lastName,(SELECT SUM(duration) FROM lesson WHERE lesson.studentId = student.studentId)AS dur,(SELECT SUM(payment) FROM lesson WHERE lesson.studentId = student.studentId)AS pay FROM student WHERE status = 1 ORDER BY name";
+        $user = $_SESSION['name'];
+        $sql = "SELECT studentId,name,lastName,(SELECT SUM(duration) FROM lesson WHERE lesson.studentId = student.studentId)AS dur,(SELECT SUM(payment) FROM lesson WHERE lesson.studentId = student.studentId)AS pay FROM student WHERE status = 1 AND user = '$user' ORDER BY name";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             return $result;
@@ -102,9 +102,8 @@ class DbHandler {
     public function getAllStudents() {
         $conn = $this->connect();
         session_start();
-        $user = $_SESSION['user'];
-        $sql = "SELECT * FROM student  ORDER BY name";// 
-        echo $sql;
+        $user = $_SESSION['name'];
+        $sql = "SELECT * FROM student WHERE user = '$user' ORDER BY name";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             return $result;
@@ -143,7 +142,9 @@ class DbHandler {
 
     public function getStudentsWithLesson() {
         $conn = $this->connect();
-        $sql = "SELECT * FROM student INNER JOIN tutor_timeTable ON student.studentId=tutor_timeTable.studentId WHERE date = CURDATE() AND student.studentId NOT IN(SELECT studentId FROM lesson WHERE date = CURDATE()) AND student.studentId NOT IN (SELECT studentId from apousia WHERE date = CURDATE()) ORDER BY tutor_timeTable.timeTo;";
+        session_start();
+        $user = $_SESSION['name'];
+        $sql = "SELECT * FROM student INNER JOIN tutor_timeTable ON student.studentId=tutor_timeTable.studentId WHERE date = CURDATE() AND student.studentId NOT IN(SELECT studentId FROM lesson WHERE date = CURDATE()) AND student.studentId NOT IN (SELECT studentId from apousia WHERE date = CURDATE()) AND student.user = '$user' ORDER BY tutor_timeTable.timeTo;";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             return $result;
@@ -153,7 +154,7 @@ class DbHandler {
     }
 
     public function getOneStudentTimeTable() {
-        $conn = $this->connect();
+        $conn = $this->connect();        
         $studentId = $_POST['studentId'];
         if (isset($_POST['findTimeTable'])) {
             $sql = "SELECT * FROM student INNER JOIN tutor_timeTable ON student.studentId = tutor_timeTable.studentId WHERE student.studentId = $studentId AND tutor_timeTable.studentId=$studentId AND tutor_timeTable.date >= CURDATE() ORDER BY tutor_timeTable.date;"; //DAYOFWEEK(tutor_timeTable.date) = DAYOFWEEK('$date')
@@ -284,8 +285,10 @@ class DbHandler {
         $email = htmlspecialchars($_POST['email']);
         $school = $_POST['school'];
         $birthday = $_POST['birhtday'];
+        session_start();
+        $user = $_SESSION['name'];
         if (isset($name) && $name != '') {
-            $sql = "INSERT INTO student (name,lastName,address,birthday,school,telephone,email) VALUES ('$name','$lastName ',' $address ',' $birthday ','$school','$telephone','$email')";
+            $sql = "INSERT INTO student (name,lastName,address,birthday,school,telephone,email,user) VALUES ('$name','$lastName ',' $address ',' $birthday ','$school','$telephone','$email'.'$user')";
             if ($conn->query($sql) === TRUE) {
                 echo "Προστέθηκε ο Μαθητής";
             } else {
