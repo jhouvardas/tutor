@@ -68,7 +68,7 @@ $page->displayHeadMatter();
                         if ($_POST['askisi'] != '') {
                             array_push($_SESSION['askiseis'], $_POST['askisi']);
                         }
-                        $_SESSION['name'] = $db->getStudentName($_SESSION['studentId']);
+                        $_SESSION['studentName'] = $db->getStudentName($_SESSION['studentId']);
                         $form->displayEditAskiseisArrayForm();
                         $form->addAskiseisToErgasiaForm();
                     } elseif (isset($_POST['deleteAskisi'])) {
@@ -82,10 +82,10 @@ $page->displayHeadMatter();
                     } elseif (isset($_POST['submitErgasia'])) {
                         session_start();
                         $db->addAskiseisFromErgasia();
-                        $name = $db->getStudentName($_SESSION['studentId']);
+                        $studentName = $db->getStudentName($_SESSION['studentId']);
                         $email = $db->getStudentEmail($_SESSION['studentId']);
-                        $page->displayErgasiaArray($_SESSION['askiseis'], $name);
-                        $body = $mail->makeErgasiaEmail($_SESSION['askiseis'], $name);
+                        $page->displayErgasiaArray($_SESSION['askiseis'], $studentName);
+                        $body = $mail->makeErgasiaEmail($_SESSION['askiseis'], $studentName);
                         $mail->sendMail($body, $email);
                     } else {
                         $form->addErgasiaForm();
@@ -411,8 +411,8 @@ $page->displayHeadMatter();
                     } elseif (isset($_POST['submitAskiseisToGroup'])) {
                         session_start();
                         $db->addAskiseisFromGroup();
-                        $name = $db->getAskiseisGroupName($_SESSION['askiseisGroupId']);
-                        $page->displayErgasiaArray($_SESSION['askiseis'], $name);
+                        $studentName = $db->getAskiseisGroupName($_SESSION['askiseisGroupId']);
+                        $page->displayErgasiaArray($_SESSION['askiseis'], $studentName);
                     } else {
                         $form->addGroupDetailsForm();
                     }
@@ -440,8 +440,8 @@ $page->displayHeadMatter();
                 case 'displayAskiseisGroup':
                     if (isset($_POST['displayGroup'])) {
                         $askiseisResource = $db->getGroupAskiseis();
-                        $name = $db->getAskiseisGroupName($_POST['askiseisGroupId']);
-                        $page->displayAskiseisInGroup($askiseisResource, $name);
+                        $studentName = $db->getAskiseisGroupName($_POST['askiseisGroupId']);
+                        $page->displayAskiseisInGroup($askiseisResource, $studentName);
                         echo '<a href="index.php?action=displayAskiseisGroup" class="btn btn-dark btn-block" type="button">Νέα αναζήτηση</a>';
                     } else {
                         $groupType = 0;
