@@ -200,7 +200,7 @@ class FormMaker {
             <div class="table-responsive-sm">
                 <table class="table table-borderless table-striped">
                     <thead class="table-success">
-                        <tr><th>Ασκήσεις</th><th><?php echo $_SESSION['name']; ?></th></tr>
+                        <tr><th>Ασκήσεις</th><th><?php echo $_SESSION['studentName']; ?></th></tr>
                     </thead>
                     <tbody>
                         <?php

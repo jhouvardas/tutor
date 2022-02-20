@@ -60,10 +60,10 @@ class DbHandler {
 //            echo '0 results';
         }
     }
-    
+
     public function getGroups($groupType) {
         $conn = $this->connect();
-        $panellinies=$groupType;
+        $panellinies = $groupType;
         $sql = "SELECT * FROM tutor_askiseisGroup WHERE panellinies = $panellinies ORDER BY askiseisGroupName ASC";
         echo $sql;
         $result = $conn->query($sql);
@@ -91,11 +91,12 @@ class DbHandler {
         session_start();
         $user = $_SESSION['name'];
         $sql = "SELECT studentId,name,lastName,(SELECT SUM(duration) FROM lesson WHERE lesson.studentId = student.studentId)AS dur,(SELECT SUM(payment) FROM lesson WHERE lesson.studentId = student.studentId)AS pay FROM student WHERE status = 1 AND user = '$user' ORDER BY name";
+        echo $sql;
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             return $result;
         } else {
-//            echo '0 results';
+            echo $sql;
         }
     }
 
@@ -154,7 +155,7 @@ class DbHandler {
     }
 
     public function getOneStudentTimeTable() {
-        $conn = $this->connect();        
+        $conn = $this->connect();
         $studentId = $_POST['studentId'];
         if (isset($_POST['findTimeTable'])) {
             $sql = "SELECT * FROM student INNER JOIN tutor_timeTable ON student.studentId = tutor_timeTable.studentId WHERE student.studentId = $studentId AND tutor_timeTable.studentId=$studentId AND tutor_timeTable.date >= CURDATE() ORDER BY tutor_timeTable.date;"; //DAYOFWEEK(tutor_timeTable.date) = DAYOFWEEK('$date')
@@ -195,9 +196,9 @@ class DbHandler {
             echo 'Δεν υπάρχουν προγραμματισμένα μαθήματα ';
         }
     }
-    
-    public function updateOneDayTimeTable(){
-        $conn= $this->connect();
+
+    public function updateOneDayTimeTable() {
+        $conn = $this->connect();
         $timeTableId = $_POST['timeTableId'];
         $date = $_POST['date'];
         $timeFrom = $_POST['timeFrom'];
@@ -210,9 +211,9 @@ class DbHandler {
 //            echo 'Δεν έγινε αλλαγή ';
         }
     }
-    
-    public function deleteOneDayTimeTable(){
-        $conn= $this->connect();
+
+    public function deleteOneDayTimeTable() {
+        $conn = $this->connect();
         $timeTableId = $_POST['timeTableId'];
         $date = $_POST['date'];
         $timeFrom = $_POST['timeFrom'];
@@ -225,10 +226,10 @@ class DbHandler {
 //            echo 'Δεν έγινε αλλαγή ';
         }
     }
-    
-    public function updateTimeTable(){
-        $conn= $this->connect();
-        session_start();        
+
+    public function updateTimeTable() {
+        $conn = $this->connect();
+        session_start();
         $studentId = $_SESSION['studentId'];
         $date = $_POST['date'];
         $timeFrom = $_POST['timeFrom'];
@@ -242,11 +243,11 @@ class DbHandler {
 //            echo 'Δεν έγινε αλλαγή ';
         }
     }
-    
-    public function deleteTimeTable($timeTableResource){
-        $conn= $this->connect();
-        $row=$timeTableResource->fetch_assoc();
-        session_start();        
+
+    public function deleteTimeTable($timeTableResource) {
+        $conn = $this->connect();
+        $row = $timeTableResource->fetch_assoc();
+        session_start();
         $studentId = $row['studentId'];
         $date = $row['date'];
         $timeFrom = $row['timeFrom'];
@@ -262,14 +263,13 @@ class DbHandler {
         }
     }
 
-
     public function addPhone() {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         $telephone = htmlspecialchars($_POST['telephone']);
         if (isset($telephone) && $telephone != '') {
             $sql = "UPDATE student SET telephone = '$telephone' WHERE studentId = $studentId";
-            
+
             if ($conn->query($sql) === TRUE) {
                 echo "Προστέθηκε το τηλέφωνο ";
             } else {
@@ -388,18 +388,17 @@ class DbHandler {
             $date = date('Y-m-d', strtotime($date . ' +7 day'));
         }
     }
-    
+
     public function addAskiseisGroup() {
         $conn = $this->connect();
-        $askiseisGroupName = $_POST['askiseisGroupName'];             
-            $sql = "INSERT INTO tutor_askiseisGroup (askiseisGroupName) VALUES ('$askiseisGroupName')";
-            if ($conn->query($sql) === TRUE) {
-                echo "Δημιουργήθηκε η ".$askiseisGroupName;
-            } else {
-                echo "Error: " . $sql . "<br>" . $conn->error;
-            }        
+        $askiseisGroupName = $_POST['askiseisGroupName'];
+        $sql = "INSERT INTO tutor_askiseisGroup (askiseisGroupName) VALUES ('$askiseisGroupName')";
+        if ($conn->query($sql) === TRUE) {
+            echo "Δημιουργήθηκε η " . $askiseisGroupName;
+        } else {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+        }
     }
-
 
     public function updateNote() {
         $conn = $this->connect();
@@ -501,10 +500,10 @@ class DbHandler {
         }
         $conn->close();
     }
-    
+
     public function addAskiseisFromGroup() {
         $conn = $this->connect();
-        $askiseisGroupId = $_SESSION['askiseisGroupId'];   
+        $askiseisGroupId = $_SESSION['askiseisGroupId'];
         $askisisSource = $_SESSION['askiseisSource'];
         $arrlength = count($_SESSION['askiseis']);
         for ($i = 0; $i < $arrlength; $i++) {
@@ -542,10 +541,10 @@ class DbHandler {
             }
         }
     }
-    
+
     public function addPanelliniesToGroup() {
-        $conn = $this->connect();        
-        $askiseisGroupId = $_POST['askiseisGroupId'];       
+        $conn = $this->connect();
+        $askiseisGroupId = $_POST['askiseisGroupId'];
         $panelliniesYear = $_POST['panelliniesYear'];
         $thema = $_POST['thema'];
         $erotima = $_POST['erotima'];
@@ -727,8 +726,8 @@ class DbHandler {
 //            echo '0 results '.$sql;
         }
     }
-    
-     public function getAskiseisGroupName($askiseisGroupId) {
+
+    public function getAskiseisGroupName($askiseisGroupId) {
         $conn = $this->connect();
         $sql = "SELECT * FROM tutor_askiseisGroup WHERE askiseisGroupId = $askiseisGroupId";
         $result = $conn->query($sql);
@@ -740,7 +739,7 @@ class DbHandler {
 //            echo '0 results '.$sql;
         }
     }
-    
+
     public function getAskisisGroupName($askiseisGroupId) {
         $conn = $this->connect();
         $sql = "SELECT * FROM tutor_askiseisGroup WHERE askiseisGroupId = $askiseisGroupId";
@@ -753,14 +752,14 @@ class DbHandler {
 //            echo '0 results '.$sql;
         }
     }
-    
-    public function getGroupAskiseis(){
+
+    public function getGroupAskiseis() {
         $conn = $this->connect();
         $groupId = $_POST['askiseisGroupId'];
         $sql = "SELECT * FROM tutor_askiseisInGroup WHERE askiseisGroupId = $groupId";
         echo $sql;
         $result = $conn->query($sql);
-        if ($result->num_rows > 0) {            
+        if ($result->num_rows > 0) {
             return $result;
         } else {
 //            echo '0 results '.$sql;
