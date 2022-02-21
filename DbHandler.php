@@ -91,12 +91,12 @@ class DbHandler {
         session_start();
         $user = $_SESSION['name'];
         $sql = "SELECT studentId,name,lastName,(SELECT SUM(duration) FROM lesson WHERE lesson.studentId = student.studentId)AS dur,(SELECT SUM(payment) FROM lesson WHERE lesson.studentId = student.studentId)AS pay FROM student WHERE status = 1 AND user = '$user' ORDER BY name";
-        echo $sql;
+//        echo $sql;
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             return $result;
         } else {
-            echo $sql;
+//            echo $sql;
         }
     }
 
