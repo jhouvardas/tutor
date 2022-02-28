@@ -145,7 +145,8 @@ class DbHandler {
         $conn = $this->connect();
         session_start();
         $user = $_SESSION['name'];
-        $sql = "SELECT * FROM student INNER JOIN tutor_timeTable ON student.studentId=tutor_timeTable.studentId WHERE date = CURDATE() AND student.studentId NOT IN(SELECT studentId FROM lesson WHERE date = CURDATE()) AND student.studentId NOT IN (SELECT studentId from apousia WHERE date = CURDATE()) AND student.user = '$user' ORDER BY tutor_timeTable.timeTo;";
+        $sql = "SELECT * FROM student INNER JOIN tutor_timeTable ON student.studentId=tutor_timeTable.studentId WHERE date = CURDATE() AND student.studentId NOT IN(SELECT studentId FROM lesson WHERE date = CURDATE()AND type = 'lesson') AND student.studentId NOT IN (SELECT studentId from apousia WHERE date = CURDATE()) AND student.user = '$user' ORDER BY tutor_timeTable.timeTo;";
+//        echo $sql;
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             return $result;
