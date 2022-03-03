@@ -468,6 +468,10 @@ $page->displayHeadMatter();
 //                        $page->displayStudentsPanellinies($groupResource);
 //                    }
                     break;
+                    case 'logOut':
+                        session_destroy();
+                    
+                    break;
                 default :
                     $form->frontPageForm();
             }

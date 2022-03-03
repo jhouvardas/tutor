@@ -110,6 +110,9 @@ class PageMaker {
                                     <a class="dropdown-item" href="index.php?action=addPanelliniesToGroup">Πανελλήνιες σε ομάδα</a
                                 </div>
                            </li>
+                           <li class="nav-item">
+                                <a class="nav-link" href="index.php?action=logOut">Αποσύνδεση</a>
+                            </li> 
                         </ul>
                     </div>  
                 </nav>
