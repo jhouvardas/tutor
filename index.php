@@ -469,8 +469,7 @@ $page->displayHeadMatter();
 //                    }
                     break;
                     case 'logOut':
-                        session_destroy();
-                    
+                        session_destroy();                    
                     break;
                 default :
                     $form->frontPageForm();
