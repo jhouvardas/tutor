@@ -470,7 +470,7 @@ class DbHandler {
         $studentId = $_POST['studentId'];
 
         if (isset($_POST['submitPayment'])) {
-            $sql = "INSERT INTO trans_transact (credit,date,transactionDescriptionId,methodId) VALUES ( $credit ,' $date ','14','5')";
+            $sql = "INSERT INTO trans_transact (credit,date,transactionDescriptionId,methodId,userId) VALUES ( $credit ,' $date ','14','5',1)";
             if ($conn->query($sql) === TRUE) {
                 echo "Ενημερώθηκαν τα έσοδα";
             } else {
@@ -1000,6 +1000,8 @@ class DbHandler {
 
     public function getStudentAskiseis() {
         $conn = $this->connect();
+        session_start();
+        $user = $_SESSION['name'];
         $studentId = $_POST['studentId'];
         if ($studentId != '6974004099') {
             $student = " WHERE askiseis.studentId = $studentId ";
@@ -1024,7 +1026,7 @@ class DbHandler {
         } else {
             $location2 = "";
         }
-        $sql = "SELECT * FROM askiseis INNER JOIN student ON askiseis.studentId = student.studentId" . $student . $location2 . $date2 . $date3 . " AND askiseis.askiseisSource != 'Πανελλήνιες' ORDER BY name,date,location,askisi ASC";
+        $sql = "SELECT * FROM askiseis INNER JOIN student ON askiseis.studentId = student.studentId" . $student . $location2 . $date2 . $date3 . " AND askiseis.askiseisSource != 'Πανελλήνιες' AND user = '$user' ORDER BY name,date,location,askisi ASC";
         if (isset($studentId) && $studentId != '') {
             $result = $conn->query($sql);
             if ($result->num_rows > 0) {
