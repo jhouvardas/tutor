@@ -14,7 +14,7 @@ $mail->isSMTP();                                      // Set mailer to use SMTP
 $mail->Host = 'mail.jhouv.eu';  // Specify main and backup SMTP servers
 $mail->SMTPAuth = true;                               // Enable SMTP authentication
 $mail->Username = 'jhouvardas@jhouv.eu';                 // SMTP username
-$mail->Password = 'Jhouv@9698';                           // SMTP password
+$mail->Password = 'J4k@like0!';                           // SMTP password
 //$mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
 $mail->Port = 587;                                    // TCP port to connect to
 $mail->CharSet = 'utf-8';

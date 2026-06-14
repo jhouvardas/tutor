@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 // If the user is not logged in redirect to the login page...
@@ -8,7 +7,8 @@ if (!$_SESSION['loggedin']) {
     exit;
 }
 
-function __autoload($name) {
+function __autoload($name)
+{
     include_once $name . '.php';
 }
 
@@ -46,13 +46,13 @@ $page->displayHeadMatter();
                 case 'lesson':
                     $form->addLessonForm();
                     $db->addLesson();
-                    ?>
+            ?>
                     <script>
                         if (window.history.replaceState) {
                             window.history.replaceState(null, null, window.location.href);
                         }
                     </script>
-                    <?php
+                <?php
                     break;
                 case 'ergasia':
                     if (isset($_POST['addErgasia'])) {
@@ -90,13 +90,13 @@ $page->displayHeadMatter();
                     } else {
                         $form->addErgasiaForm();
                     }
-                    ?>
+                ?>
                     <script>
                         if (window.history.replaceState) {
                             window.history.replaceState(null, null, window.location.href);
                         }
                     </script>
-                    <?php
+                <?php
                     break;
 
                 case 'panellinies':
@@ -104,26 +104,26 @@ $page->displayHeadMatter();
                         $db->addPanellinies();
                     }
                     $form->addPanelliniesForm();
-                    ?>
+                ?>
                     <script>
                         if (window.history.replaceState) {
                             window.history.replaceState(null, null, window.location.href);
                         }
                     </script>
-                    <?php
+                <?php
                     break;
                 case 'theoria':
                     if (isset($_POST['theoria'])) {
                         $db->addTheoria();
                     }
                     $form->addTheoriaForm();
-                    ?>
+                ?>
                     <script>
                         if (window.history.replaceState) {
                             window.history.replaceState(null, null, window.location.href);
                         }
                     </script>
-                    <?php
+                <?php
                     break;
                 case 'studentsAskiseis':
                     if ($_POST['studentId'] == '') {
@@ -163,27 +163,27 @@ $page->displayHeadMatter();
                     $db->addPayment();
                     session_start();
                     $user = $_SESSION['name'];
-                    if($user == 'jhouv' || $user == 'jhouv2023'){
+                    if ($user == 'jhouv2025' || $user == 'jhouv2026') {
                         $db->addPaymentToTransactions(); //προσθέτει την πληρωμή στην εφαρμογή Έσοδα Έξοδα
-                    }                    
-                    ?>
+                    }
+                ?>
                     <script>
                         if (window.history.replaceState) {
                             window.history.replaceState(null, null, window.location.href);
                         }
                     </script>
-                    <?php
+                <?php
                     break;
                 case 'note':
                     $form->addNoteForm();
                     $db->addNote();
-                    ?>
+                ?>
                     <script>
                         if (window.history.replaceState) {
                             window.history.replaceState(null, null, window.location.href);
                         }
                     </script>
-                    <?php
+                <?php
                     break;
                 case 'editNote':
                     if (isset($_POST['getStudentNotes'])) {
@@ -199,25 +199,25 @@ $page->displayHeadMatter();
                     } else {
                         $form->getStudentNotesForm();
                     }
-                    ?>
+                ?>
                     <script>
                         if (window.history.replaceState) {
                             window.history.replaceState(null, null, window.location.href);
                         }
                     </script>
-                    <?php
+                <?php
                     break;
 
                 case 'apousia':
                     $form->addApousiaForm();
                     $db->addApousia();
-                    ?>
+                ?>
                     <script>
                         if (window.history.replaceState) {
                             window.history.replaceState(null, null, window.location.href);
                         }
                     </script>
-                    <?php
+                <?php
                     break;
                 case 'studentNotes':
                     if ($_POST['studentId'] == '') {
@@ -226,7 +226,7 @@ $page->displayHeadMatter();
                     if (isset($_POST['getStudentNotes'])) {
                         $studentNotesResource = $db->getStudentNotes();
                         $page->displayStudentNotes($studentNotesResource);
-//                        echo '<a href="index.php?action=studentLessons" class="btn btn-dark btn-block" type="button">Νέα αναζήτηση</a>';
+                        //                        echo '<a href="index.php?action=studentLessons" class="btn btn-dark btn-block" type="button">Νέα αναζήτηση</a>';
                     }
                     break;
                 case 'studentApousies':
@@ -236,7 +236,7 @@ $page->displayHeadMatter();
                     if (isset($_POST['getStudentApousies'])) {
                         $studentApousiesResource = $db->getStudentApousies();
                         $page->displayStudentApousies($studentApousiesResource);
-//                        echo '<a href="index.php?action=studentLessons" class="btn btn-dark btn-block" type="button">Νέα αναζήτηση</a>';
+                        //                        echo '<a href="index.php?action=studentLessons" class="btn btn-dark btn-block" type="button">Νέα αναζήτηση</a>';
                     }
                     break;
                 case 'studentMathimataApousies':
@@ -273,13 +273,13 @@ $page->displayHeadMatter();
                     if (isset($_POST['lessonId']) && $_POST['lessonId'] != 0) {
                         $db->deleteLesson();
                     }
-                    ?>
+                ?>
                     <script>
                         if (window.history.replaceState) {
                             window.history.replaceState(null, null, window.location.href);
                         }
                     </script>
-                    <?php
+                <?php
                     break;
                 case 'deletePayment':
                     $form->deletePaymentForm();
@@ -287,13 +287,13 @@ $page->displayHeadMatter();
                     $lastName = $db->getLessonLastName($_POST['lessonId']);
                     $db->deletePayment();
                     $db->deletePaymentAtTransactions($date, $lastName); //αφαιρεί την πληρωμή στην εφαρμογή Έσοδα Έξοδα
-                    ?>
+                ?>
                     <script>
                         if (window.history.replaceState) {
                             window.history.replaceState(null, null, window.location.href);
                         }
                     </script>
-                    <?php
+                <?php
                     break;
                 case 'studentList':
                     $studentsResource = $db->getStudentsDetails();
@@ -321,28 +321,28 @@ $page->displayHeadMatter();
                         echo '<a href="index.php?action=studentBalanceSheet" class="btn btn-dark btn-block" type="button">Νέα αναζήτηση</a>';
                     }
                     break;
-                case 'mail':
+                /* case 'mail':
                     $mail->sendMail();
-                    ?>
+                ?>
                     <script>
                         if (window.history.replaceState) {
                             window.history.replaceState(null, null, window.location.href);
                         }
                     </script>
-                    <?php
-                    break;
+                <?php
+                    break; */
                 case 'addTimeTable':
                     $form->addTimeTableForm();
                     if (isset($_POST['setTimeTable'])) {
                         $db->addTimeTable();
                     }
-                    ?>
+                ?>
                     <script>
                         if (window.history.replaceState) {
                             window.history.replaceState(null, null, window.location.href);
                         }
                     </script>
-                    <?php
+                <?php
                     break;
                 case 'editTimeTable':
                     if (isset($_POST['findTimeTable'])) {
@@ -362,13 +362,13 @@ $page->displayHeadMatter();
                     } else {
                         $form->getTimeTableForm();
                     }
-                    ?>
+                ?>
                     <script>
                         if (window.history.replaceState) {
                             window.history.replaceState(null, null, window.location.href);
                         }
                     </script>
-                    <?php
+                <?php
                     break;
                 case 'timeTable':
                     if (isset($_POST['showTimeTable'])) {
@@ -416,26 +416,26 @@ $page->displayHeadMatter();
                     } else {
                         $form->addGroupDetailsForm();
                     }
-                    ?>
+                ?>
                     <script>
                         if (window.history.replaceState) {
                             window.history.replaceState(null, null, window.location.href);
                         }
                     </script>
-                    <?php
+                <?php
                     break;
                 case 'addPanelliniesToGroup':
                     if (isset($_POST['panelliniesToGroup'])) {
                         $db->addPanelliniesToGroup();
                     }
                     $form->addPanelliniesToGroupForm();
-                    ?>
+                ?>
                     <script>
                         if (window.history.replaceState) {
                             window.history.replaceState(null, null, window.location.href);
                         }
                     </script>
-                    <?php
+            <?php
                     break;
                 case 'displayAskiseisGroup':
                     if (isset($_POST['displayGroup'])) {
@@ -449,29 +449,21 @@ $page->displayHeadMatter();
                     }
                     break;
                 case 'displayPanelliniesGroup':
-                    
+
                     if (isset($_POST['getPanelliniesGroup'])) {
                         $groupResource = $db->getGroupAskiseis();
                         $page->displayPanelliniesGroup($groupResource);
                         echo '<a href="index.php?action=displayPanelliniesGroup" class="btn btn-dark btn-block" type="button">Νέα αναζήτηση</a>';
                     } else {
-                       $form->getPanelliniesInGroupForm(); 
+                        $form->getPanelliniesInGroupForm();
                     }
-//                    
-//                    if (isset($groupResource)) {
-//                        
-//                    } else {
-//                        $form->getPanelliniesInGroupForm();
-//                    }
-//                    $groupResource = $db->getGroupAskiseis();
-//                    if (isset($groupResource)) {
-//                        $page->displayStudentsPanellinies($groupResource);
-//                    }
+
                     break;
-                    case 'logOut':
-                        session_destroy();                    
+
+                case 'logOut':
+                    session_destroy();
                     break;
-                default :
+                default:
                     $form->frontPageForm();
             }
             ?>
@@ -480,7 +472,7 @@ $page->displayHeadMatter();
     <div class="row">
         <div class="col">
             <?php
-// $page->displayMenu();
+            // $page->displayMenu();
             ?>
         </div>
     </div>
@@ -488,4 +480,3 @@ $page->displayHeadMatter();
 
 <?php
 $page->displayEndMatter();
-

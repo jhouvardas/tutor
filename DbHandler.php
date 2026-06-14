@@ -1,14 +1,16 @@
 <?php
 
-class DbHandler {
+class DbHandler
+{
 
-    public function connect() {
+    public function connect()
+    {
         $servername = "jhouv.eu";
         $username = "jhouvardas";
         $password = "Jhouv@1957";
         $dbname = "tutor";
 
-// Create connection
+        // Create connection
         $conn = new mysqli($servername, $username, $password, $dbname);
         mysqli_set_charset($conn, "utf8");
         if ($conn->connect_error) {
@@ -19,7 +21,8 @@ class DbHandler {
         return $conn;
     }
 
-    public function connectToFamilyDB() {
+    public function connectToFamilyDB()
+    {
         $servername = "jhouv.eu";
         $username = "familyUser";
         $password = "Geo@1994!";
@@ -29,12 +32,13 @@ class DbHandler {
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         } else {
-            //echo 'welcome ha';
+            echo 'welcome ha';
         }
         return $conn;
     }
 
-    public function login($username, $password) {
+    public function login($username, $password)
+    {
         $conn = $this->connect();
         $sql = "SELECT * FROM user WHERE username = '" . $username . "' AND password = '" . $password . "'";
         $result = $conn->query($sql);
@@ -47,34 +51,37 @@ class DbHandler {
         }
     }
 
-    public function getStudentsDetails() {
+    public function getStudentsDetails()
+    {
         $conn = $this->connect();
         session_start();
         $user = $_SESSION['name'];
         $sql = "SELECT * FROM student WHERE status = 1 AND user = '$user' ORDER BY name ASC";
-//        echo $sql;
+        //        echo $sql;
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             return $result;
         } else {
-//            echo '0 results';
+            //            echo '0 results';
         }
     }
 
-    public function getGroups($groupType) {
+    public function getGroups($groupType)
+    {
         $conn = $this->connect();
         $panellinies = $groupType;
         $sql = "SELECT * FROM tutor_askiseisGroup WHERE panellinies = $panellinies ORDER BY askiseisGroupName ASC";
-//        echo $sql;
+        //        echo $sql;
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             return $result;
         } else {
-//            echo '0 results';
+            //            echo '0 results';
         }
     }
 
-    public function getOneStudentsDetails() {
+    public function getOneStudentsDetails()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         $sql = "SELECT * FROM student WHERE studentId = $studentId";
@@ -82,25 +89,27 @@ class DbHandler {
         if ($result->num_rows > 0) {
             return $result;
         } else {
-//            echo '0 results';
+            //            echo '0 results';
         }
     }
 
-    public function getStudents() {
+    public function getStudents()
+    {
         $conn = $this->connect();
         session_start();
         $user = $_SESSION['name'];
-        $sql = "SELECT studentId,name,lastName,(SELECT SUM(duration) FROM lesson WHERE lesson.studentId = student.studentId)AS dur,(SELECT SUM(payment) FROM lesson WHERE lesson.studentId = student.studentId)AS pay FROM student WHERE status = 1 AND user = '$user' ORDER BY name";
-//        echo $sql;
+        $sql = "SELECT studentId,paying,name,lastName,(SELECT SUM(duration) FROM lesson WHERE lesson.studentId = student.studentId)AS dur,(SELECT SUM(payment) FROM lesson WHERE lesson.studentId = student.studentId)AS pay FROM student WHERE status = 1 AND user = '$user' ORDER BY name";
+        //        echo $sql;
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             return $result;
         } else {
-//            echo $sql;
+            //            echo $sql;
         }
     }
 
-    public function getAllStudents() {
+    public function getAllStudents()
+    {
         $conn = $this->connect();
         session_start();
         $user = $_SESSION['name'];
@@ -109,11 +118,12 @@ class DbHandler {
         if ($result->num_rows > 0) {
             return $result;
         } else {
-//            echo '0 results';
+            //            echo '0 results';
         }
     }
 
-    public function getStudentAllLessonsCost($studentId) {
+    public function getStudentAllLessonsCost($studentId)
+    {
         $conn = $this->connect();
         $sql = "SELECT sum(duration) as total FROM lesson WHERE studentId = $studentId";
         $result = $conn->query($sql);
@@ -123,11 +133,12 @@ class DbHandler {
             //echo $totalDebitToDate . 'debit';
             return $totalLessonsDurationToDate * 10;
         } else {
-//            echo '0 results';
+            //            echo '0 results';
         }
     }
 
-    public function getStudentAllPaymentsTotal($studentId) {
+    public function getStudentAllPaymentsTotal($studentId)
+    {
         $conn = $this->connect();
         $sql = "SELECT sum(payment) as total FROM lesson WHERE studentId = $studentId";
         $result = $conn->query($sql);
@@ -137,16 +148,17 @@ class DbHandler {
             //echo $totalDebitToDate . 'debit';
             return $totalPaymentsToDate;
         } else {
-//            echo '0 results';
+            //            echo '0 results';
         }
     }
 
-    public function getStudentsWithLesson() {
+    public function getStudentsWithLesson()
+    {
         $conn = $this->connect();
         session_start();
         $user = $_SESSION['name'];
         $sql = "SELECT * FROM student INNER JOIN tutor_timeTable ON student.studentId=tutor_timeTable.studentId WHERE date = CURDATE() AND student.studentId NOT IN(SELECT studentId FROM lesson WHERE date = CURDATE()AND type = 'lesson') AND student.studentId NOT IN (SELECT studentId from apousia WHERE date = CURDATE()) AND student.user = '$user' ORDER BY tutor_timeTable.timeTo;";
-//        echo $sql;
+        //        echo $sql;
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             return $result;
@@ -155,12 +167,13 @@ class DbHandler {
         }
     }
 
-    public function getOneStudentTimeTable() {
+    public function getOneStudentTimeTable()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         if (isset($_POST['findTimeTable'])) {
             $sql = "SELECT * FROM student INNER JOIN tutor_timeTable ON student.studentId = tutor_timeTable.studentId WHERE student.studentId = $studentId AND tutor_timeTable.studentId=$studentId AND tutor_timeTable.date >= CURDATE() ORDER BY tutor_timeTable.date;"; //DAYOFWEEK(tutor_timeTable.date) = DAYOFWEEK('$date')
-//            echo $sql;
+            //            echo $sql;
             $result = $conn->query($sql);
             if ($result->num_rows > 0) {
                 return $result;
@@ -170,7 +183,8 @@ class DbHandler {
         }
     }
 
-    public function getOneDayTimeTable() {
+    public function getOneDayTimeTable()
+    {
         $conn = $this->connect();
         $date = $_POST['date'];
         session_start();
@@ -184,21 +198,23 @@ class DbHandler {
         }
     }
 
-    public function getOneLessonTimeTable() {
+    public function getOneLessonTimeTable()
+    {
         $conn = $this->connect();
         $timeTableId = $_POST['timeTableId'];
         $sql = "SELECT * FROM tutor_timeTable WHERE timeTableId = '$timeTableId' ";
-//        echo $sql;
+        //        echo $sql;
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
-//            echo $sql;
+            //            echo $sql;
             return $result;
         } else {
             echo 'Δεν υπάρχουν προγραμματισμένα μαθήματα ';
         }
     }
 
-    public function updateOneDayTimeTable() {
+    public function updateOneDayTimeTable()
+    {
         $conn = $this->connect();
         $timeTableId = $_POST['timeTableId'];
         $date = $_POST['date'];
@@ -209,11 +225,12 @@ class DbHandler {
         if ($result->num_rows > 0) {
             echo 'Η αλλαγή έγινε';
         } else {
-//            echo 'Δεν έγινε αλλαγή ';
+            //            echo 'Δεν έγινε αλλαγή ';
         }
     }
 
-    public function deleteOneDayTimeTable() {
+    public function deleteOneDayTimeTable()
+    {
         $conn = $this->connect();
         $timeTableId = $_POST['timeTableId'];
         $date = $_POST['date'];
@@ -224,11 +241,12 @@ class DbHandler {
         if ($result->num_rows > 0) {
             echo 'Η αλλαγή έγινε';
         } else {
-//            echo 'Δεν έγινε αλλαγή ';
+            //            echo 'Δεν έγινε αλλαγή ';
         }
     }
 
-    public function updateTimeTable() {
+    public function updateTimeTable()
+    {
         $conn = $this->connect();
         session_start();
         $studentId = $_SESSION['studentId'];
@@ -237,15 +255,16 @@ class DbHandler {
         $timeTo = $_POST['timeTo'];
         $sql = "UPDATE tutor_timeTable SET timeFrom='$timeFrom',timeTo='$timeTo' WHERE studentId = $studentId AND DAYOFWEEK(date) = DAYOFWEEK('$date') AND date >= '$date';";
         $result = $conn->query($sql);
-//        echo $sql;
+        //        echo $sql;
         if ($result->num_rows > 0) {
             echo 'Η αλλαγή έγινε';
         } else {
-//            echo 'Δεν έγινε αλλαγή ';
+            //            echo 'Δεν έγινε αλλαγή ';
         }
     }
 
-    public function deleteTimeTable($timeTableResource) {
+    public function deleteTimeTable($timeTableResource)
+    {
         $conn = $this->connect();
         $row = $timeTableResource->fetch_assoc();
         session_start();
@@ -254,22 +273,23 @@ class DbHandler {
         $timeFrom = $row['timeFrom'];
         $timeTo = $row['timeTo'];
         $sql = "DELETE FROM tutor_timeTable WHERE timeFrom='$timeFrom' AND timeTo='$timeTo' AND studentId = $studentId AND DAYOFWEEK(date) = DAYOFWEEK('$date') AND date >= '$date';";
-//        echo $sql;
+        //        echo $sql;
         $result = $conn->query($sql);
-//        echo $sql;
+        //        echo $sql;
         if ($result->num_rows > 0) {
             echo 'Η διαγραφή έγινε';
         } else {
-//            echo 'Δεν έγινε αλλαγή ';
+            //            echo 'Δεν έγινε αλλαγή ';
         }
     }
 
-    public function addPhone() {
+    public function addPhone()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
-        $telephone = htmlspecialchars($_POST['telephone']);
-        if (isset($telephone) && $telephone != '') {
-            $sql = "UPDATE student SET telephone = '$telephone' WHERE studentId = $studentId";
+        $phone = htmlspecialchars($_POST['phone']);
+        if (isset($phone) && $phone != '') {
+            $sql = "UPDATE student SET phone = '$phone' WHERE studentId = $studentId";
 
             if ($conn->query($sql) === TRUE) {
                 echo "Προστέθηκε το τηλέφωνο ";
@@ -279,19 +299,22 @@ class DbHandler {
         }
     }
 
-    public function addNewStudent() {
+    public function addNewStudent()
+    {
         $conn = $this->connect();
         $name = htmlspecialchars($_POST['name']);
         $lastName = htmlspecialchars($_POST['lastName']);
         $address = htmlspecialchars($_POST['address']);
-        $telephone = htmlspecialchars($_POST['telephone']);
+        $phone = htmlspecialchars($_POST['phone']);
         $email = htmlspecialchars($_POST['email']);
         $school = $_POST['school'];
         $birthday = $_POST['birhtday'];
+        $target = $_POST['target'];
+        $login_pass = htmlspecialchars($_POST['login_pass']);
         session_start();
         $user = $_SESSION['name'];
         if (isset($name) && $name != '') {
-            $sql = "INSERT INTO student (name,lastName,address,birthday,school,telephone,email,user) VALUES ('$name','$lastName ',' $address ',' $birthday ','$school','$telephone','$email','$user')";
+            $sql = "INSERT INTO student (name,lastName,address,birthday,school,phone,email,user,target,quiz_password) VALUES ('$name','$lastName ',' $address ',' $birthday ','$school','$phone','$email','$user','$target','$login_pass')";
             if ($conn->query($sql) === TRUE) {
                 echo "Προστέθηκε ο Μαθητής";
             } else {
@@ -300,18 +323,33 @@ class DbHandler {
         }
     }
 
-    public function updateStudent() {
+    public function updateStudent()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         $name = htmlspecialchars($_POST['name']);
         $lastName = htmlspecialchars($_POST['lastName']);
         $address = htmlspecialchars($_POST['address']);
-        $telephone = htmlspecialchars($_POST['telephone']);
+        $phone = htmlspecialchars($_POST['phone']);
         $email = htmlspecialchars($_POST['email']);
-//        $school = $_POST['school'];
         $birthday = $_POST['birhtday'];
+        $target = $_POST['target'];
+        // Προσθέτουμε τη λήψη του password από τη φόρμα
+        $login_pass = htmlspecialchars($_POST['login_pass']);
+
         if (isset($name) && $name != '') {
-            $sql = "UPDATE student SET name ='$name',lastName='$lastName ',address=' $address ',birthday=' $birthday ',telephone='$telephone',email='$email'  WHERE studentId = $studentId";
+            // Προσθέτουμε το login_pass='$login_pass' στο SQL
+            $sql = "UPDATE student SET 
+                name ='$name',
+                lastName='$lastName',
+                address='$address',
+                birthday='$birthday',
+                phone='$phone',
+                email='$email',
+                target='$target',
+                quiz_password='$login_pass' 
+                WHERE studentId = $studentId";
+
             if ($conn->query($sql) === TRUE) {
                 echo "Διορθώθηκε ο Μαθητής";
             } else {
@@ -320,7 +358,8 @@ class DbHandler {
         }
     }
 
-    public function addLesson() {
+    public function addLesson()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         $duration = $_POST['duration'];
@@ -340,7 +379,8 @@ class DbHandler {
         }
     }
 
-    public function addNote() {
+    public function addNote()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         $note = $_POST['note'];
@@ -357,7 +397,8 @@ class DbHandler {
         }
     }
 
-    public function addTheoria() {
+    public function addTheoria()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         $book = $_POST['book'];
@@ -375,7 +416,8 @@ class DbHandler {
         }
     }
 
-    public function addTimeTable() {
+    public function addTimeTable()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         $date = $_POST['dateFrom'];
@@ -390,7 +432,8 @@ class DbHandler {
         }
     }
 
-    public function addAskiseisGroup() {
+    public function addAskiseisGroup()
+    {
         $conn = $this->connect();
         $askiseisGroupName = $_POST['askiseisGroupName'];
         $sql = "INSERT INTO tutor_askiseisGroup (askiseisGroupName) VALUES ('$askiseisGroupName')";
@@ -401,7 +444,8 @@ class DbHandler {
         }
     }
 
-    public function updateNote() {
+    public function updateNote()
+    {
         $conn = $this->connect();
         $noteId = $_POST['noteId'];
         $note = $_POST['note'];
@@ -416,7 +460,8 @@ class DbHandler {
         }
     }
 
-    public function deleteNote() {
+    public function deleteNote()
+    {
         $conn = $this->connect();
         $noteId = $_POST['noteId'];
         if (isset($_POST['deleteNote'])) {
@@ -429,7 +474,8 @@ class DbHandler {
         }
     }
 
-    public function addApousia() {
+    public function addApousia()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         $reason = $_POST['reason'];
@@ -446,7 +492,8 @@ class DbHandler {
         }
     }
 
-    public function addPayment() {
+    public function addPayment()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         $payment = $_POST['payment'];
@@ -463,14 +510,16 @@ class DbHandler {
         }
     }
 
-    public function addPaymentToTransactions() {
+    public function addPaymentToTransactions()
+    {
+        echo 'eeeeeeeeeeeeee';
         $conn = $this->connectToFamilyDB();
         $credit = $_POST['payment'];
         $date = $_POST['date'];
         $studentId = $_POST['studentId'];
 
         if (isset($_POST['submitPayment'])) {
-            $sql = "INSERT INTO trans_transact (credit,date,transactionDescriptionId,methodId,userId) VALUES ( $credit ,' $date ','14','5',1)";
+            $sql = "INSERT INTO trans_transact (credit,date,transactionDescriptionId,methodId,userId) VALUES ( $credit ,'$date','14','5',1)";
             if ($conn->query($sql) === TRUE) {
                 echo "Ενημερώθηκαν τα έσοδα";
             } else {
@@ -479,7 +528,8 @@ class DbHandler {
         }
     }
 
-    public function addAskiseisFromErgasia() {
+    public function addAskiseisFromErgasia()
+    {
         $conn = $this->connect();
         $studentId = $_SESSION['studentId'];
         $location = $_SESSION['location'];
@@ -489,7 +539,7 @@ class DbHandler {
         for ($i = 0; $i < $arrlength; $i++) {
             $askisi = $_SESSION['askiseis'][$i];
             $sql = "INSERT INTO askiseis (studentId,location,date,askiseisSource,askisi) VALUES ($studentId,'$location','$date','$askisisSource',$askisi)";
-//            echo $sql;
+            //            echo $sql;
             if ($conn->query($sql) === TRUE) {
                 $added = 1;
             } else {
@@ -497,12 +547,13 @@ class DbHandler {
             }
         }
         if ($added == 1) {
-//            echo 'Προστέθηκαν οι ασκήσεις';
+            //            echo 'Προστέθηκαν οι ασκήσεις';
         }
         $conn->close();
     }
 
-    public function addAskiseisFromGroup() {
+    public function addAskiseisFromGroup()
+    {
         $conn = $this->connect();
         $askiseisGroupId = $_SESSION['askiseisGroupId'];
         $askisisSource = $_SESSION['askiseisSource'];
@@ -510,7 +561,7 @@ class DbHandler {
         for ($i = 0; $i < $arrlength; $i++) {
             $askisi = $_SESSION['askiseis'][$i];
             $sql = "INSERT INTO tutor_askiseisInGroup (askiseisGroupId,askiseisSource,askisi) VALUES ($askiseisGroupId,'$askisisSource',$askisi)";
-//            echo $sql;
+            //            echo $sql;
             if ($conn->query($sql) === TRUE) {
                 $added = 1;
             } else {
@@ -518,12 +569,13 @@ class DbHandler {
             }
         }
         if ($added == 1) {
-//            echo 'Προστέθηκαν οι ασκήσεις';
+            //            echo 'Προστέθηκαν οι ασκήσεις';
         }
         $conn->close();
     }
 
-    public function addPanellinies() {
+    public function addPanellinies()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         $location = $_POST['location'];
@@ -543,7 +595,8 @@ class DbHandler {
         }
     }
 
-    public function addPanelliniesToGroup() {
+    public function addPanelliniesToGroup()
+    {
         $conn = $this->connect();
         $askiseisGroupId = $_POST['askiseisGroupId'];
         $panelliniesYear = $_POST['panelliniesYear'];
@@ -553,7 +606,7 @@ class DbHandler {
         $lykeio = $_POST['lykeio'];
         if (isset($askiseisGroupId) && isset($_POST['panelliniesToGroup'])) {
             $sql = "INSERT INTO askiseis(studentId,location,date,panelliniesYear,thema,erotima,period,lykeio,askiseisSource) VALUES (50,'',CURDATE(),$panelliniesYear,'$thema','$erotima','$period','$lykeio','Πανελλήνιες')";
-//            echo $sql;
+            //            echo $sql;
             if ($conn->query($sql) === TRUE) {
                 echo "Προστέθηκαν οι Πανελλήνιες";
             } else {
@@ -562,7 +615,8 @@ class DbHandler {
         }
     }
 
-    public function deletePaymentAtTransactions($date, $lastName) {
+    public function deletePaymentAtTransactions($date, $lastName)
+    {
         $conn = $this->connectToFamilyDB();
         if (isset($_POST['deletePayment'])) {
             $sql = "DELETE FROM trans_transact  WHERE trans_transact.date = '$date'  AND transactionDescriptionId = 14 and methodId = 5";
@@ -574,7 +628,8 @@ class DbHandler {
         }
     }
 
-    public function deletePayment() {
+    public function deletePayment()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         $lessonId = $_POST['lessonId'];
@@ -590,7 +645,8 @@ class DbHandler {
         }
     }
 
-    public function deleteLesson() {
+    public function deleteLesson()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         $lessonId = $_POST['lessonId'];
@@ -607,7 +663,8 @@ class DbHandler {
         }
     }
 
-    public function deleteAllStudentLessonsAndPayments() {
+    public function deleteAllStudentLessonsAndPayments()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         $sql = "DELETE FROM lesson WHERE studentId = $studentId";
@@ -622,7 +679,8 @@ class DbHandler {
         }
     }
 
-    public function deleteAllStudentTelephones() {
+    public function deleteAllStudentTelephones()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         $sql = "DELETE FROM telephone WHERE studentId = $studentId";
@@ -637,7 +695,8 @@ class DbHandler {
         }
     }
 
-    public function deleteStudent() {
+    public function deleteStudent()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         $sql = "DELETE FROM student WHERE studentId = $studentId";
@@ -652,10 +711,13 @@ class DbHandler {
         }
     }
 
-    public function getStudentLessons() {
+    public function getStudentLessons()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
-//        echo 'heeereeeeeeee'.$studentId;
+        //        echo 'heeereeeeeeee'.$studentId;
+        session_start();
+        $user = $_SESSION['name'];
         if (isset($_POST['date'])) {
             $date = $_POST['date'];
         } else {
@@ -666,19 +728,20 @@ class DbHandler {
                 $sql = "SELECT * FROM student INNER JOIN lesson ON student.studentId = lesson.studentId WHERE lesson.date >= '" . $date . "' ORDER BY lesson.date,lesson.type";
             } else {
                 $sql = "SELECT * FROM student INNER JOIN lesson ON student.studentId = lesson.studentId WHERE student.studentId = $studentId AND lesson.date >= '$date' ORDER BY lesson.date,lesson.type";
-//                echo 'αααααααααααααααααααααααααααααααααααααααα'.$sql;
+                //                echo 'αααααααααααααααααααααααααααααααααααααααα'.$sql;
             }
             $result = $conn->query($sql);
             if ($result->num_rows > 0) {
-//                 echo 'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' . $sql;
+                //                 echo 'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' . $sql;
                 return $result;
             } else {
-//                echo '0 results';
+                //                echo '0 results';
             }
         }
     }
 
-    public function getStudentNotes() {
+    public function getStudentNotes()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         if (isset($_POST['date'])) {
@@ -691,19 +754,20 @@ class DbHandler {
                 $sql = "SELECT * FROM student INNER JOIN note ON student.studentId = note.studentId WHERE note.date >= '" . $date . "' ORDER BY note.date";
             } else {
                 $sql = "SELECT * FROM student INNER JOIN note ON student.studentId = note.studentId WHERE student.studentId = $studentId AND note.date >= '$date' ORDER BY note.date";
-//                echo 'αααααααααααααααααααααααααααααααααααααααα'.$sql;
+                //                echo 'αααααααααααααααααααααααααααααααααααααααα'.$sql;
             }
             $result = $conn->query($sql);
             if ($result->num_rows > 0) {
-//                 echo 'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' . $sql;
+                //                 echo 'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' . $sql;
                 return $result;
             } else {
-//                echo '0 results';
+                //                echo '0 results';
             }
         }
     }
 
-    public function getNote($noteId) {
+    public function getNote($noteId)
+    {
         $conn = $this->connect();
         $sql = "SELECT * FROM note WHERE noteId = $noteId";
         $result = $conn->query($sql);
@@ -711,11 +775,12 @@ class DbHandler {
             echo 'μπράβο';
             return $result;
         } else {
-//            echo '0 results '.$sql;
+            //            echo '0 results '.$sql;
         }
     }
 
-    public function getStudentName($studentId) {
+    public function getStudentName($studentId)
+    {
         $conn = $this->connect();
         $sql = "SELECT * FROM student WHERE studentId = $studentId";
         $result = $conn->query($sql);
@@ -724,11 +789,12 @@ class DbHandler {
             $name = $row['name'];
             return $name;
         } else {
-//            echo '0 results '.$sql;
+            //            echo '0 results '.$sql;
         }
     }
 
-    public function getAskiseisGroupName($askiseisGroupId) {
+    public function getAskiseisGroupName($askiseisGroupId)
+    {
         $conn = $this->connect();
         $sql = "SELECT * FROM tutor_askiseisGroup WHERE askiseisGroupId = $askiseisGroupId";
         $result = $conn->query($sql);
@@ -737,11 +803,12 @@ class DbHandler {
             $name = $row['askiseisGroupName'];
             return $name;
         } else {
-//            echo '0 results '.$sql;
+            //            echo '0 results '.$sql;
         }
     }
 
-    public function getAskisisGroupName($askiseisGroupId) {
+    public function getAskisisGroupName($askiseisGroupId)
+    {
         $conn = $this->connect();
         $sql = "SELECT * FROM tutor_askiseisGroup WHERE askiseisGroupId = $askiseisGroupId";
         $result = $conn->query($sql);
@@ -750,38 +817,41 @@ class DbHandler {
             $name = $row['name'];
             return $name;
         } else {
-//            echo '0 results '.$sql;
+            //            echo '0 results '.$sql;
         }
     }
 
-    public function getGroupAskiseis() {
+    public function getGroupAskiseis()
+    {
         $conn = $this->connect();
         $groupId = $_POST['askiseisGroupId'];
         $sql = "SELECT * FROM tutor_askiseisInGroup WHERE askiseisGroupId = $groupId";
-//        echo $sql;
+        //        echo $sql;
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             return $result;
         } else {
-//            echo '0 results '.$sql;
+            //            echo '0 results '.$sql;
         }
     }
 
-    public function getStudentEmail($studentId) {
+    public function getStudentEmail($studentId)
+    {
         $conn = $this->connect();
         $sql = "SELECT * FROM student WHERE studentId = $studentId";
-//        echo $sql;
+        //        echo $sql;
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             $email = $row['email'];
             return $email;
         } else {
-//            echo '0 results '.$sql;
+            //            echo '0 results '.$sql;
         }
     }
 
-    public function getStudentApousies() {
+    public function getStudentApousies()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         if (isset($_POST['date'])) {
@@ -794,19 +864,20 @@ class DbHandler {
                 $sql = "SELECT * FROM student INNER JOIN apousia ON student.studentId = apousia.studentId WHERE apousia.date >= '" . $date . "' ORDER BY lastName,date";
             } else {
                 $sql = "SELECT * FROM student INNER JOIN apousia ON student.studentId = apousia.studentId WHERE student.studentId = $studentId AND apousia.date >= '$date' ORDER BY lastName,date";
-//                echo 'αααααααααααααααααααααααααααααααααααααααα'.$sql;
+                //                echo 'αααααααααααααααααααααααααααααααααααααααα'.$sql;
             }
             $result = $conn->query($sql);
             if ($result->num_rows > 0) {
-//                 echo 'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' . $sql;
+                //                 echo 'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' . $sql;
                 return $result;
             } else {
-//                echo '0 results';
+                //                echo '0 results';
             }
         }
     }
 
-    public function getStudentMathimataApousies() {
+    public function getStudentMathimataApousies()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         if (isset($_POST['date'])) {
@@ -824,11 +895,12 @@ class DbHandler {
         if ($result->num_rows > 0) {
             return $result;
         } else {
-//            echo '0 results';
+            //            echo '0 results';
         }
     }
 
-    public function getStudentMathimataApousiesTest() {
+    public function getStudentMathimataApousiesTest()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         if (isset($_POST['date'])) {
@@ -846,11 +918,12 @@ class DbHandler {
         if ($result->num_rows > 0) {
             return $result;
         } else {
-//            echo '0 results';
+            //            echo '0 results';
         }
     }
 
-    public function getStudentsDayLessons() {
+    public function getStudentsDayLessons()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         if (isset($studentId) && $studentId != 0 && $studentId != '6974004099') {
@@ -860,21 +933,22 @@ class DbHandler {
         $toDate = $_POST['toDate'];
         if (isset($toDate) && $toDate != 0) {
             $sql = "SELECT * FROM lesson INNER JOIN student ON lesson.studentId=student.studentId WHERE $student lesson.duration > 0 AND lesson.date >= '$date' AND lesson.date <= '$toDate'  ORDER BY lesson.date";
-//            echo $sql;
+            //            echo $sql;
         } else {
             $sql = "SELECT * FROM lesson INNER JOIN student ON lesson.studentId=student.studentId WHERE $student lesson.duration > 0 AND lesson.date = '$date'";
-//             echo $sql;
+            //             echo $sql;
         }
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
-//            echo 'success';
+            //            echo 'success';
             return $result;
         } else {
             echo 'fail';
         }
     }
 
-    public function getStudentPayments1() {
+    public function getStudentPayments1()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         if (isset($_POST['date'])) {
@@ -885,11 +959,11 @@ class DbHandler {
         if (isset($studentId) && $studentId > 0) {
             if ($studentId == 6974004099) {
                 $sql = "SELECT student.name, student.lastName, lesson.date,lesson.lessonId ,lesson.payment, lesson.date"
-                        . " FROM student INNER JOIN lesson ON student.studentId = lesson.studentId WHERE lesson.date >= '" . $date . "' AND lesson.payment > 0 ORDER BY lesson.date";
+                    . " FROM student INNER JOIN lesson ON student.studentId = lesson.studentId WHERE lesson.date >= '" . $date . "' AND lesson.payment > 0 ORDER BY lesson.date";
             } else {
                 $sql = "SELECT student.name, student.lastName, lesson.date,lesson.lessonId, lesson.payment, lesson.date"
-                        . " FROM student INNER JOIN lesson ON student.studentId = lesson.studentId WHERE student.studentId = '" . $studentId . "'"
-                        . "AND lesson.date >= '" . $date . "' AND lesson.payment > 0 ORDER BY lesson.date";
+                    . " FROM student INNER JOIN lesson ON student.studentId = lesson.studentId WHERE student.studentId = '" . $studentId . "'"
+                    . "AND lesson.date >= '" . $date . "' AND lesson.payment > 0 ORDER BY lesson.date";
             }
             $result = $conn->query($sql);
             if ($result->num_rows > 0) {
@@ -901,13 +975,14 @@ class DbHandler {
         }
     }
 
-    public function getLessons() {
+    public function getLessons()
+    {
 
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         $sql = "SELECT date,lessonId FROM lesson INNER JOIN student ON student.studentId = lesson.studentId WHERE student.studentId =  $studentId AND lesson.type = 'lesson' ORDER BY date DESC";
 
-//        if (isset($studentId) && $studentId != '0') {
+        //        if (isset($studentId) && $studentId != '0') {
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             echo 'great' . $sql;
@@ -916,10 +991,11 @@ class DbHandler {
             echo "0 results" . $sql;
         }
 
-//        }
+        //        }
     }
 
-    public function getLessonDate($lessonId) {
+    public function getLessonDate($lessonId)
+    {
         if (isset($_POST['deletePayment'])) {
             $conn = $this->connect();
             $sql = "SELECT date FROM lesson WHERE lessonid = $lessonId";
@@ -937,7 +1013,8 @@ class DbHandler {
         }
     }
 
-    public function getLessonLastName($lessonId) {
+    public function getLessonLastName($lessonId)
+    {
         if (isset($_POST['deletePayment'])) {
             $conn = $this->connect();
             $sql = "SELECT lastName FROM student INNER JOIN lesson ON student.studentId = lesson.studentId WHERE lessonId = $lessonId";
@@ -955,7 +1032,8 @@ class DbHandler {
         }
     }
 
-    public function getDurationOfLessons() {
+    public function getDurationOfLessons()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         $date = $_POST['date'];
@@ -977,7 +1055,8 @@ class DbHandler {
         return $studentDurationOfLessons;
     }
 
-    public function getStudentPaymentsTotal() {
+    public function getStudentPaymentsTotal()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         $date = $_POST['date'];
@@ -992,13 +1071,14 @@ class DbHandler {
                 while ($row = $result->fetch_assoc()) {
                     $studentPaymentsTotal = $row['SUM(payment)'];
                 }
-//                echo "0 results";
+                //                echo "0 results";
             }
         }
         return $studentPaymentsTotal;
     }
 
-    public function getStudentAskiseis() {
+    public function getStudentAskiseis()
+    {
         $conn = $this->connect();
         session_start();
         $user = $_SESSION['name'];
@@ -1037,7 +1117,8 @@ class DbHandler {
         }
     }
 
-    public function getStudentPanellinies() {
+    public function getStudentPanellinies()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         if ($studentId != '6974004099') {
@@ -1062,14 +1143,15 @@ class DbHandler {
             $result = $conn->query($sql);
             if ($result->num_rows > 0) {
                 return $result;
-//                echo $sql;
+                //                echo $sql;
             } else {
                 echo "Δεν έχουν ανατεθεί πανελλήνιες";
             }
         }
     }
 
-    public function getStudentTheoria() {
+    public function getStudentTheoria()
+    {
         $conn = $this->connect();
         $studentId = $_POST['studentId'];
         if ($studentId != '6974004099') {
@@ -1088,12 +1170,11 @@ class DbHandler {
         if (isset($studentId) && $studentId != '') {
             $result = $conn->query($sql);
             if ($result->num_rows > 0) {
-//                echo $sql;
+                //                echo $sql;
                 return $result;
             } else {
                 echo "Δεν έχει ανατεθεί θεωρία ";
             }
         }
     }
-
 }
