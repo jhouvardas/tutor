@@ -45,6 +45,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">Είσοδος</button>
                 </form>
+                <div class="text-center mt-3">
+                    <a href="student_register.php" class="text-muted">Δεν έχεις λογαριασμό; Κάνε Εγγραφή</a>
+                </div>
             </div>
         </div>
     </div>

@@ -45,11 +45,6 @@ class FormMaker
                     <label for="note">Σχολές</label>
                     <textarea class="form-control" rows="4" name="target" id="note"></textarea>
                 </div>
-                <div class="form-group">
-                    <label for="login_pass">Password Πύλης Μαθητή:</label>
-                    <input type="text" class="form-control" id="login_pass" name="login_pass"
-                        placeholder="Κωδικός πρόσβασης">
-                </div>
                 <button type="submit" class="btn btn-success">Υποβολή</button>
             </form>
         </div>
@@ -102,13 +97,20 @@ class FormMaker
                                         <option value="ΓΕΛ Μαραθοκάμπου">ΓΕΛ Μαραθοκάμπου</option>                                     
                                     </select>             
                                 </div>                         -->
-                <div class="form-group">
-                    <label for="login_pass">Password Πύλης Μαθητή:</label>
-                    <input type="text" class="form-control" id="login_pass" name="login_pass"
-                        value="<?php echo isset($row['quiz_password']) ? $row['quiz_password'] : ''; ?>"
-                        placeholder="Κωδικός πρόσβασης">
-                </div>
                 <button type="submit" class="btn btn-success" name="updateStudent">Υποβολή</button>
+            </form>
+        </div>
+    <?php
+    }
+
+    public function deleteStudentForm()
+    {
+    ?>
+        <div class="container mt-4">
+            <h5 class="bg-danger text-white p-3 rounded shadow-sm">Διαγραφή Μαθητή</h5>
+            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?>" method="post" class="bg-light p-4 border shadow-sm rounded" onSubmit="return confirm('ΠΡΟΣΟΧΗ: Είστε σίγουρος ότι θέλετε να διαγράψετε οριστικά αυτόν τον μαθητή και όλα τα δεδομένα του;');">
+                <?php $this->selectStudent(); ?>
+                <button type="submit" class="btn btn-danger mt-3 shadow" name="deleteStudentBtn">Οριστική Διαγραφή</button>
             </form>
         </div>
     <?php
@@ -787,21 +789,6 @@ class FormMaker
                 <?php // $this->selectToDateNotRequired(); 
                 ?>
                 <button type="submit" class="btn btn-success" name="getStudentMathimataApousies">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function getStudentMathimataApousiesFormTest()
-    {
-    ?>
-        <h5>Μαθήματα - Απουσίες</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post">
-                <?php $this->selectStudent(); ?>
-                <?php $this->selectDateNotRequired(); ?>
-                <?php $this->selectToDateNotRequired(); ?>
-                <button type="submit" class="btn btn-success" name="getStudentMathimataApousiesTest">Υποβολή</button>
             </form>
         </div>
     <?php

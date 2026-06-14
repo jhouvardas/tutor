@@ -55,8 +55,8 @@ class DbHandler
     {
         $conn = $this->connect();
         session_start();
-        $user = $_SESSION['name'];
-        $sql = "SELECT * FROM student WHERE status = 1 AND user = '$user' ORDER BY name ASC";
+        $activeYear = $_SESSION['active_school_year'];
+        $sql = "SELECT * FROM student WHERE status = 1 AND schoolYear = '$activeYear' ORDER BY name ASC";
         //        echo $sql;
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
@@ -97,8 +97,8 @@ class DbHandler
     {
         $conn = $this->connect();
         session_start();
-        $user = $_SESSION['name'];
-        $sql = "SELECT studentId,paying,name,lastName,(SELECT SUM(duration) FROM lesson WHERE lesson.studentId = student.studentId)AS dur,(SELECT SUM(payment) FROM lesson WHERE lesson.studentId = student.studentId)AS pay FROM student WHERE status = 1 AND user = '$user' ORDER BY name";
+        $activeYear = $_SESSION['active_school_year'];
+        $sql = "SELECT studentId,paying,name,lastName,(SELECT SUM(duration) FROM lesson WHERE lesson.studentId = student.studentId)AS dur,(SELECT SUM(payment) FROM lesson WHERE lesson.studentId = student.studentId)AS pay FROM student WHERE status = 1 AND schoolYear = '$activeYear' ORDER BY name";
         //        echo $sql;
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
@@ -112,8 +112,8 @@ class DbHandler
     {
         $conn = $this->connect();
         session_start();
-        $user = $_SESSION['name'];
-        $sql = "SELECT * FROM student WHERE user = '$user' ORDER BY name";
+        $activeYear = $_SESSION['active_school_year'];
+        $sql = "SELECT * FROM student WHERE schoolYear = '$activeYear' ORDER BY name";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             return $result;
@@ -156,8 +156,8 @@ class DbHandler
     {
         $conn = $this->connect();
         session_start();
-        $user = $_SESSION['name'];
-        $sql = "SELECT * FROM student INNER JOIN tutor_timeTable ON student.studentId=tutor_timeTable.studentId WHERE date = CURDATE() AND student.studentId NOT IN(SELECT studentId FROM lesson WHERE date = CURDATE()AND type = 'lesson') AND student.studentId NOT IN (SELECT studentId from apousia WHERE date = CURDATE()) AND student.user = '$user' ORDER BY tutor_timeTable.timeTo;";
+        $activeYear = $_SESSION['active_school_year'];
+        $sql = "SELECT * FROM student INNER JOIN tutor_timeTable ON student.studentId=tutor_timeTable.studentId WHERE date = CURDATE() AND student.studentId NOT IN(SELECT studentId FROM lesson WHERE date = CURDATE()AND type = 'lesson') AND student.studentId NOT IN (SELECT studentId from apousia WHERE date = CURDATE()) AND student.schoolYear = '$activeYear' ORDER BY tutor_timeTable.timeTo;";
         //        echo $sql;
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
@@ -188,8 +188,8 @@ class DbHandler
         $conn = $this->connect();
         $date = $_POST['date'];
         session_start();
-        $user = $_SESSION['name'];
-        $sql = "SELECT name,lastName,tutor_timeTable.timeFrom FROM student INNER JOIN tutor_timeTable ON student.studentId = tutor_timeTable.studentId  WHERE tutor_timeTable.date ='$date' AND student.user = '$user' ORDER BY tutor_timeTable.timeFrom";
+        $activeYear = $_SESSION['active_school_year'];
+        $sql = "SELECT name,lastName,tutor_timeTable.timeFrom FROM student INNER JOIN tutor_timeTable ON student.studentId = tutor_timeTable.studentId  WHERE tutor_timeTable.date ='$date' AND student.schoolYear = '$activeYear' ORDER BY tutor_timeTable.timeFrom";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             return $result;
@@ -310,11 +310,11 @@ class DbHandler
         $school = $_POST['school'];
         $birthday = $_POST['birhtday'];
         $target = $_POST['target'];
-        $login_pass = htmlspecialchars($_POST['login_pass']);
         session_start();
         $user = $_SESSION['name'];
+        $activeYear = $_SESSION['active_school_year'];
         if (isset($name) && $name != '') {
-            $sql = "INSERT INTO student (name,lastName,address,birthday,school,phone,email,user,target,quiz_password) VALUES ('$name','$lastName ',' $address ',' $birthday ','$school','$phone','$email','$user','$target','$login_pass')";
+            $sql = "INSERT INTO student (name,lastName,address,birthday,school,phone,email,user,schoolYear,target) VALUES ('$name','$lastName ',' $address ',' $birthday ','$school','$phone','$email','$user','$activeYear','$target')";
             if ($conn->query($sql) === TRUE) {
                 echo "Προστέθηκε ο Μαθητής";
             } else {
@@ -334,11 +334,8 @@ class DbHandler
         $email = htmlspecialchars($_POST['email']);
         $birthday = $_POST['birhtday'];
         $target = $_POST['target'];
-        // Προσθέτουμε τη λήψη του password από τη φόρμα
-        $login_pass = htmlspecialchars($_POST['login_pass']);
 
         if (isset($name) && $name != '') {
-            // Προσθέτουμε το login_pass='$login_pass' στο SQL
             $sql = "UPDATE student SET 
                 name ='$name',
                 lastName='$lastName',
@@ -346,8 +343,7 @@ class DbHandler
                 birthday='$birthday',
                 phone='$phone',
                 email='$email',
-                target='$target',
-                quiz_password='$login_pass' 
+                target='$target'
                 WHERE studentId = $studentId";
 
             if ($conn->query($sql) === TRUE) {
@@ -701,13 +697,11 @@ class DbHandler
         $studentId = $_POST['studentId'];
         $sql = "DELETE FROM student WHERE studentId = $studentId";
         if (isset($studentId) && $studentId != '') {
-            $result = $conn->query($sql);
             if ($conn->query($sql) === TRUE) {
-                echo "Records deleted successfully" . $sql;
+                echo "<div class='alert alert-success mt-3'>Ο μαθητής διαγράφηκε επιτυχώς.</div>";
             } else {
-                echo "Error: " . $sql . "<br>" . $conn->error;
+                echo "<div class='alert alert-danger mt-3'>Σφάλμα: " . $conn->error . "</div>";
             }
-            return $result;
         }
     }
 
@@ -899,29 +893,6 @@ class DbHandler
         }
     }
 
-    public function getStudentMathimataApousiesTest()
-    {
-        $conn = $this->connect();
-        $studentId = $_POST['studentId'];
-        if (isset($_POST['date'])) {
-            $date = $_POST['date'];
-        } else {
-            $date = '2020-01-01';
-        }
-        if (isset($studentId) && $studentId != 0) {
-            $sql = "SELECT date,type FROM lesson WHERE lesson.type='lesson' and studentId = $studentId AND date >= '$date' 
-                      UNION
-                    SELECT date,reason FROM apousia WHERE studentId = $studentId AND date >= '$date'
-                    ORDER BY date";
-        }
-        $result = $conn->query($sql);
-        if ($result->num_rows > 0) {
-            return $result;
-        } else {
-            //            echo '0 results';
-        }
-    }
-
     public function getStudentsDayLessons()
     {
         $conn = $this->connect();
@@ -1081,7 +1052,7 @@ class DbHandler
     {
         $conn = $this->connect();
         session_start();
-        $user = $_SESSION['name'];
+        $activeYear = $_SESSION['active_school_year'];
         $studentId = $_POST['studentId'];
         if ($studentId != '6974004099') {
             $student = " WHERE askiseis.studentId = $studentId ";
@@ -1106,7 +1077,7 @@ class DbHandler
         } else {
             $location2 = "";
         }
-        $sql = "SELECT * FROM askiseis INNER JOIN student ON askiseis.studentId = student.studentId" . $student . $location2 . $date2 . $date3 . " AND askiseis.askiseisSource != 'Πανελλήνιες' AND user = '$user' ORDER BY name,date,location,askisi ASC";
+        $sql = "SELECT * FROM askiseis INNER JOIN student ON askiseis.studentId = student.studentId" . $student . $location2 . $date2 . $date3 . " AND askiseis.askiseisSource != 'Πανελλήνιες' AND student.schoolYear = '$activeYear' ORDER BY name,date,location,askisi ASC";
         if (isset($studentId) && $studentId != '') {
             $result = $conn->query($sql);
             if ($result->num_rows > 0) {

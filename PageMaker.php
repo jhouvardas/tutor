@@ -44,6 +44,7 @@ class PageMaker
 
     public function displayMenu()
     {
+        $currentYear = $_SESSION['active_school_year'] ?? date('Y');
         ?>
             <nav class="navbar navbar-expand-md bg-dark navbar-dark">
                 <a class="navbar-brand" href="index.php">Μαθήματα</a>
@@ -57,17 +58,6 @@ class PageMaker
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="index.php?action=lesson">Μάθημα</a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="index.php?action=debit" id="navbardrop" data-toggle="dropdown">
-                                Ασκήσεις
-                            </a>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="index.php?action=panellinies">Πανελλήνιες</a>
-                                <a class="dropdown-item" href="index.php?action=theoria">Θεωρία</a>
-                                <a class="dropdown-item" href="index.php?action=ergasia">Εργασία</a>
-                            </div>
-
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="index.php?action=apousia">Απουσία</a>
@@ -83,11 +73,6 @@ class PageMaker
                                 Αναφορές
                             </a>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="index.php?action=studentsAskiseis">Ασκήσεις</a>
-                                <a class="dropdown-item" href="index.php?action=studentsPanellinies">Πανελλήνιες</a>
-                                <a class="dropdown-item" href="index.php?action=studentsTheoria">Θεωρία</a>
-                                <a class="dropdown-item" href="index.php?action=displayAskiseisGroup">Ομάδες Ασκήσεων</a>
-                                <a class="dropdown-item" href="index.php?action=displayPanelliniesGroup">Ομάδες Πανελληνίων</a>
                                 <a class="dropdown-item" href="index.php?action=studentBalanceSheet">Καρτέλα μαθητή</a>
                                 <a class="dropdown-item" href="index.php?action=studentList">Κατάσταση Μαθητών</a>
                                 <a class="dropdown-item" href="index.php?action=studentPayments">Κατάσταση πληρωμών</a>
@@ -105,36 +90,25 @@ class PageMaker
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" href="index.php?action=student">Νέος Μαθητής</a>
                                 <a class="dropdown-item" href="index.php?action=editStudent">Διόρθωση Μαθητή</a>
+                                <a class="dropdown-item" href="index.php?action=deleteStudent">Διαγραφή Μαθητή</a>
                                 <a class="dropdown-item" href="index.php?action=addTimeTable">Προγραμματισμός Μαθημάτων</a>
                                 <a class="dropdown-item" href="index.php?action=editTimeTable">Διόρθωση προγραμματισμού</a>
                                 <a class="dropdown-item" href="index.php?action=deleteLesson">Διαγραφή μαθήματος</a>
                                 <a class="dropdown-item" href="index.php?action=deletePayment">Διαγραφή πληρωμής</a>
                                 <a class="dropdown-item" href="index.php?action=editNote">Διόρθωση Σημείωσης</a>
-                                <a class="dropdown-item" href="index.php?action=addAskiseisGroup">Νέα Ομάδα ασκήσεων</a>
-                                <a class="dropdown-item" href="index.php?action=addAskiseisToGroup">Ασκήσεις σε ομάδα</a>
-                                <a class="dropdown-item" href="index.php?action=addPanelliniesToGroup">Πανελλήνιες σε ομάδα</a>
-                            </div>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-warning" href="#" id="tutor2Drop" data-toggle="dropdown">
-                                <strong>Tutor 2.0</strong>
-                            </a>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="tutor2.php?action=addSource">Νέα Πηγή Ασκήσεων</a>
-                                <a class="dropdown-item" href="tutor2.php?action=addQuestion">Τράπεζα Θεμάτων</a>
-                                <a class="dropdown-item" href="tutor2.php?action=createAssignment">Δημιουργία Εργασίας</a>
-                                <a class="dropdown-item" href="tutor2.php?action=manageGroups">Διαχείριση Ομάδων</a>
-
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item font-weight-bold" href="tutor2.php?action=manageGrades">📝 Καταχώρηση Βαθμών</a>
-                                <a class="dropdown-item" href="tutor2.php?action=studentSettings">🔑 Κωδικοί Μαθητών (Portal)</a>
-
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="tutor2.php?action=statistics">Στατιστικά Προόδου</a>
                             </div>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="index.php?action=logOut">Αποσύνδεση</a>
+                        </li>
+                        <li class="nav-item ml-2 d-flex align-items-center">
+                            <form class="form-inline m-0" method="POST" action="">
+                                <select name="set_school_year" class="form-control form-control-sm bg-secondary text-white border-secondary font-weight-bold" onchange="this.form.submit()">
+                                    <?php for ($y = 2024; $y <= 2030; $y++): ?>
+                                        <option value="<?php echo $y; ?>" <?php if ($currentYear == $y) echo 'selected'; ?>><?php echo ($y - 1) . '-' . $y; ?></option>
+                                    <?php endfor; ?>
+                                </select>
+                            </form>
                         </li>
                     </ul>
                 </div>

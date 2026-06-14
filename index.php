@@ -1,19 +1,25 @@
 <?php
 session_start();
-// If the user is not logged in redirect to the login page...
+
+if (isset($_POST['set_school_year'])) {
+    $_SESSION['active_school_year'] = (int)$_POST['set_school_year'];
+    setcookie('preferred_school_year', $_POST['set_school_year'], time() + (86400 * 365), "/");
+    header("Location: " . $_SERVER['REQUEST_URI']);
+    exit;
+}
+
 if (!$_SESSION['loggedin']) {
-    //echo 'pisoooo';
     header('Location: login.php');
     exit;
 }
 
-function __autoload($name)
-{
-    include_once $name . '.php';
-}
+require_once 'DbHandler.php';
+require_once 'PageMaker.php';
+require_once 'FormMaker.php';
+require_once 'MailMaker.php';
 
 $page = new PageMaker();
-$form = new FormMaker;
+$form = new FormMaker();
 $db = new DbHandler();
 $mail = new MailMaker();
 $page->displayHeadMatter();
@@ -43,6 +49,14 @@ $page->displayHeadMatter();
                         $form->selectStudentToEditOnChangeSubmitForm();
                     }
                     break;
+                case 'deleteStudent':
+                    if (isset($_POST['deleteStudentBtn']) && isset($_POST['studentId'])) {
+                        $db->deleteAllStudentLessonsAndPayments();
+                        $db->deleteAllStudentTelephones();
+                        $db->deleteStudent();
+                    }
+                    $form->deleteStudentForm();
+                    break;
                 case 'lesson':
                     $form->addLessonForm();
                     $db->addLesson();
@@ -54,117 +68,12 @@ $page->displayHeadMatter();
                     </script>
                 <?php
                     break;
-                case 'ergasia':
-                    if (isset($_POST['addErgasia'])) {
-                        $form->addAskiseisToErgasiaForm();
-                        session_start();
-                        $_SESSION['date'] = $_POST['date'];
-                        $_SESSION['studentId'] = $_POST['studentId'];
-                        $_SESSION['location'] = $_POST['location'];
-                        $_SESSION['askiseisSource'] = $_POST['askiseisSource'];
-                        $_SESSION['askiseis'] = array();
-                    } elseif (isset($_POST['addAskisi'])) {
-                        session_start();
-                        if ($_POST['askisi'] != '') {
-                            array_push($_SESSION['askiseis'], $_POST['askisi']);
-                        }
-                        $_SESSION['studentName'] = $db->getStudentName($_SESSION['studentId']);
-                        $form->displayEditAskiseisArrayForm();
-                        $form->addAskiseisToErgasiaForm();
-                    } elseif (isset($_POST['deleteAskisi'])) {
-                        session_start();
-                        $first = $_POST['deleteAskisi'];
-                        $first = (int) filter_var($first, FILTER_SANITIZE_NUMBER_INT);
-                        unset($_SESSION['askiseis'][$first]);
-                        $_SESSION['askiseis'] = array_values($_SESSION['askiseis']);
-                        $form->displayEditAskiseisArrayForm();
-                        $form->addAskiseisToErgasiaForm();
-                    } elseif (isset($_POST['submitErgasia'])) {
-                        session_start();
-                        $db->addAskiseisFromErgasia();
-                        $studentName = $db->getStudentName($_SESSION['studentId']);
-                        $email = $db->getStudentEmail($_SESSION['studentId']);
-                        $page->displayErgasiaArray($_SESSION['askiseis'], $studentName);
-                        $body = $mail->makeErgasiaEmail($_SESSION['askiseis'], $studentName);
-                        $mail->sendMail($body, $email);
-                    } else {
-                        $form->addErgasiaForm();
-                    }
-                ?>
-                    <script>
-                        if (window.history.replaceState) {
-                            window.history.replaceState(null, null, window.location.href);
-                        }
-                    </script>
-                <?php
-                    break;
-
-                case 'panellinies':
-                    if (isset($_POST['panellinies'])) {
-                        $db->addPanellinies();
-                    }
-                    $form->addPanelliniesForm();
-                ?>
-                    <script>
-                        if (window.history.replaceState) {
-                            window.history.replaceState(null, null, window.location.href);
-                        }
-                    </script>
-                <?php
-                    break;
-                case 'theoria':
-                    if (isset($_POST['theoria'])) {
-                        $db->addTheoria();
-                    }
-                    $form->addTheoriaForm();
-                ?>
-                    <script>
-                        if (window.history.replaceState) {
-                            window.history.replaceState(null, null, window.location.href);
-                        }
-                    </script>
-                <?php
-                    break;
-                case 'studentsAskiseis':
-                    if ($_POST['studentId'] == '') {
-                        $form->getStudentAskiseisForm();
-                    }
-                    $askiseisResource = $db->getStudentAskiseis();
-                    if (isset($askiseisResource)) {
-                        $page->displayStudentsAskiseis($askiseisResource);
-                        $page->displayNewStudentAskiseisSearch();
-                    }
-                    break;
-                case 'studentsPanellinies':
-                    if ($_POST['studentId'] == '') {
-                        $form->getStudentPanelliniesForm();
-                    }
-                    $panelliniesResource = $db->getStudentPanellinies();
-                    $email = $db->getStudentEmail($_POST['studentId']);
-                    if (isset($panelliniesResource)) {
-                        $page->displayStudentsPanellinies($panelliniesResource);
-                        $panelliniesResource = $db->getStudentPanellinies();
-                        $body = $mail->makePanelliniesEmail($panelliniesResource);
-                        $mail->sendMail($body, $email);
-                    }
-                    break;
-                case 'studentsTheoria':
-                    if ($_POST['studentId'] == '') {
-                        $form->getStudentTheoriaForm();
-                    }
-                    $theoriaResource = $db->getStudentTheoria();
-                    if (isset($theoriaResource)) {
-                        $page->displayStudentTheoria($theoriaResource);
-                    }
-
-                    break;
                 case 'payment':
                     $form->addPaymentForm();
                     $db->addPayment();
-                    session_start();
                     $user = $_SESSION['name'];
                     if ($user == 'jhouv2025' || $user == 'jhouv2026') {
-                        $db->addPaymentToTransactions(); //προσθέτει την πληρωμή στην εφαρμογή Έσοδα Έξοδα
+                        $db->addPaymentToTransactions();
                     }
                 ?>
                     <script>
@@ -207,7 +116,6 @@ $page->displayHeadMatter();
                     </script>
                 <?php
                     break;
-
                 case 'apousia':
                     $form->addApousiaForm();
                     $db->addApousia();
@@ -226,7 +134,6 @@ $page->displayHeadMatter();
                     if (isset($_POST['getStudentNotes'])) {
                         $studentNotesResource = $db->getStudentNotes();
                         $page->displayStudentNotes($studentNotesResource);
-                        //                        echo '<a href="index.php?action=studentLessons" class="btn btn-dark btn-block" type="button">Νέα αναζήτηση</a>';
                     }
                     break;
                 case 'studentApousies':
@@ -236,7 +143,6 @@ $page->displayHeadMatter();
                     if (isset($_POST['getStudentApousies'])) {
                         $studentApousiesResource = $db->getStudentApousies();
                         $page->displayStudentApousies($studentApousiesResource);
-                        //                        echo '<a href="index.php?action=studentLessons" class="btn btn-dark btn-block" type="button">Νέα αναζήτηση</a>';
                     }
                     break;
                 case 'studentMathimataApousies':
@@ -286,7 +192,7 @@ $page->displayHeadMatter();
                     $date = $db->getLessonDate($_POST['lessonId']);
                     $lastName = $db->getLessonLastName($_POST['lessonId']);
                     $db->deletePayment();
-                    $db->deletePaymentAtTransactions($date, $lastName); //αφαιρεί την πληρωμή στην εφαρμογή Έσοδα Έξοδα
+                    $db->deletePaymentAtTransactions($date, $lastName);
                 ?>
                     <script>
                         if (window.history.replaceState) {
@@ -307,7 +213,6 @@ $page->displayHeadMatter();
                     if ($_POST['studentId'] == 0) {
                         $form->getStudentBalanceSheetForm();
                     }
-
                     if (isset($_POST['showStudentBalanceSheet'])) {
                         $studentLessonsResource = $db->getStudentLessons();
                         $studentBalance = 0;
@@ -321,16 +226,6 @@ $page->displayHeadMatter();
                         echo '<a href="index.php?action=studentBalanceSheet" class="btn btn-dark btn-block" type="button">Νέα αναζήτηση</a>';
                     }
                     break;
-                /* case 'mail':
-                    $mail->sendMail();
-                ?>
-                    <script>
-                        if (window.history.replaceState) {
-                            window.history.replaceState(null, null, window.location.href);
-                        }
-                    </script>
-                <?php
-                    break; */
                 case 'addTimeTable':
                     $form->addTimeTableForm();
                     if (isset($_POST['setTimeTable'])) {
@@ -357,7 +252,6 @@ $page->displayHeadMatter();
                     } elseif (isset($_POST['deleteTimeTable'])) {
                         $timeTableResource = $db->getOneStudentTimeTable();
                         $db->deleteTimeTable($timeTableResource);
-                        //$db->addTimeTable();
                         $form->getTimeTableForm();
                     } else {
                         $form->getTimeTableForm();
@@ -378,88 +272,6 @@ $page->displayHeadMatter();
                         $form->showTimeTableForm();
                     }
                     break;
-                case 'addAskiseisGroup':
-                    $form->addAskiseisGroup();
-                    if (isset($_POST['addAskiseisGroup'])) {
-                        $db->addAskiseisGroup();
-                    }
-                    break;
-                case 'addAskiseisToGroup':
-                    if (isset($_POST['updateGroup'])) {
-                        $form->addAskiseisToGroupForm();
-                        session_start();
-                        $_SESSION['date'] = $_POST['date'];
-                        $_SESSION['askiseisGroupId'] = $_POST['askiseisGroupId'];
-                        $_SESSION['askiseisSource'] = $_POST['askiseisSource'];
-                        $_SESSION['askiseis'] = array();
-                    } elseif (isset($_POST['addAskisi'])) {
-                        session_start();
-                        if ($_POST['askisi'] != '') {
-                            array_push($_SESSION['askiseis'], $_POST['askisi']);
-                        }
-                        $_SESSION['askiseisGroupName'] = $db->getAskiseisGroupName($_SESSION['askiseisGroupId']);
-                        $form->displayEditAskiseisArrayForm();
-                        $form->addAskiseisToGroupForm();
-                    } elseif (isset($_POST['deleteAskisi'])) {
-                        session_start();
-                        $first = $_POST['deleteAskisi'];
-                        $first = (int) filter_var($first, FILTER_SANITIZE_NUMBER_INT);
-                        unset($_SESSION['askiseis'][$first]);
-                        $_SESSION['askiseis'] = array_values($_SESSION['askiseis']);
-                        $form->displayEditAskiseisArrayForm();
-                        $form->addAskiseisToGroupForm();
-                    } elseif (isset($_POST['submitAskiseisToGroup'])) {
-                        session_start();
-                        $db->addAskiseisFromGroup();
-                        $studentName = $db->getAskiseisGroupName($_SESSION['askiseisGroupId']);
-                        $page->displayErgasiaArray($_SESSION['askiseis'], $studentName);
-                    } else {
-                        $form->addGroupDetailsForm();
-                    }
-                ?>
-                    <script>
-                        if (window.history.replaceState) {
-                            window.history.replaceState(null, null, window.location.href);
-                        }
-                    </script>
-                <?php
-                    break;
-                case 'addPanelliniesToGroup':
-                    if (isset($_POST['panelliniesToGroup'])) {
-                        $db->addPanelliniesToGroup();
-                    }
-                    $form->addPanelliniesToGroupForm();
-                ?>
-                    <script>
-                        if (window.history.replaceState) {
-                            window.history.replaceState(null, null, window.location.href);
-                        }
-                    </script>
-            <?php
-                    break;
-                case 'displayAskiseisGroup':
-                    if (isset($_POST['displayGroup'])) {
-                        $askiseisResource = $db->getGroupAskiseis();
-                        $studentName = $db->getAskiseisGroupName($_POST['askiseisGroupId']);
-                        $page->displayAskiseisInGroup($askiseisResource, $studentName);
-                        echo '<a href="index.php?action=displayAskiseisGroup" class="btn btn-dark btn-block" type="button">Νέα αναζήτηση</a>';
-                    } else {
-                        $groupType = 0;
-                        $form->displayAskiseisGroupForm($groupType);
-                    }
-                    break;
-                case 'displayPanelliniesGroup':
-
-                    if (isset($_POST['getPanelliniesGroup'])) {
-                        $groupResource = $db->getGroupAskiseis();
-                        $page->displayPanelliniesGroup($groupResource);
-                        echo '<a href="index.php?action=displayPanelliniesGroup" class="btn btn-dark btn-block" type="button">Νέα αναζήτηση</a>';
-                    } else {
-                        $form->getPanelliniesInGroupForm();
-                    }
-
-                    break;
-
                 case 'logOut':
                     session_destroy();
                     break;
