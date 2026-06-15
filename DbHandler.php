@@ -66,20 +66,6 @@ class DbHandler
         }
     }
 
-    public function getGroups($groupType)
-    {
-        $conn = $this->connect();
-        $panellinies = $groupType;
-        $sql = "SELECT * FROM tutor_askiseisGroup WHERE panellinies = $panellinies ORDER BY askiseisGroupName ASC";
-        //        echo $sql;
-        $result = $conn->query($sql);
-        if ($result->num_rows > 0) {
-            return $result;
-        } else {
-            //            echo '0 results';
-        }
-    }
-
     public function getOneStudentsDetails()
     {
         $conn = $this->connect();
@@ -220,67 +206,100 @@ class DbHandler
         $date = $_POST['date'];
         $timeFrom = $_POST['timeFrom'];
         $timeTo = $_POST['timeTo'];
-        $sql = "UPDATE tutor_timeTable SET date = '$date', timeFrom = '$timeFrom', timeTo ='$timeTo' WHERE timeTableId = $timeTableId ";
-        $result = $conn->query($sql);
-        if ($result->num_rows > 0) {
-            echo 'Η αλλαγή έγινε';
+        $sql = "UPDATE tutor_timeTable SET date = ?, timeFrom = ?, timeTo = ? WHERE timeTableId = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sssi", $date, $timeFrom, $timeTo, $timeTableId);
+
+        if ($stmt->execute()) {
+            if ($stmt->affected_rows > 0) {
+                echo "<div class='alert alert-success'>Η αλλαγή έγινε με επιτυχία.</div>";
+            } else {
+                echo "<div class='alert alert-info'>Δεν έγινε κάποια αλλαγή στα δεδομένα.</div>";
+            }
         } else {
-            //            echo 'Δεν έγινε αλλαγή ';
+            echo "<div class='alert alert-danger'>Σφάλμα: " . $stmt->error . "</div>";
         }
+        $stmt->close();
     }
 
     public function deleteOneDayTimeTable()
     {
         $conn = $this->connect();
         $timeTableId = $_POST['timeTableId'];
-        $date = $_POST['date'];
-        $timeFrom = $_POST['timeFrom'];
-        $timeTo = $_POST['timeTo'];
-        $sql = "DELETE FROM tutor_timeTable WHERE date = '$date' AND timeFrom = '$timeFrom' AND timeTo ='$timeTo' AND timeTableId = $timeTableId ";
-        $result = $conn->query($sql);
-        if ($result->num_rows > 0) {
-            echo 'Η αλλαγή έγινε';
+        $sql = "DELETE FROM tutor_timeTable WHERE timeTableId = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $timeTableId);
+
+        if ($stmt->execute()) {
+            if ($stmt->affected_rows > 0) {
+                echo "<div class='alert alert-success'>Το μάθημα διαγράφηκε επιτυχώς.</div>";
+            } else {
+                echo "<div class='alert alert-info'>Δεν βρέθηκε το μάθημα για διαγραφή.</div>";
+            }
         } else {
-            //            echo 'Δεν έγινε αλλαγή ';
+            echo "<div class='alert alert-danger'>Σφάλμα: " . $stmt->error . "</div>";
         }
+        $stmt->close();
     }
 
     public function updateTimeTable()
     {
         $conn = $this->connect();
-        session_start();
-        $studentId = $_SESSION['studentId'];
+        $studentId = $_POST['studentId'];
         $date = $_POST['date'];
         $timeFrom = $_POST['timeFrom'];
         $timeTo = $_POST['timeTo'];
-        $sql = "UPDATE tutor_timeTable SET timeFrom='$timeFrom',timeTo='$timeTo' WHERE studentId = $studentId AND DAYOFWEEK(date) = DAYOFWEEK('$date') AND date >= '$date';";
-        $result = $conn->query($sql);
-        //        echo $sql;
-        if ($result->num_rows > 0) {
-            echo 'Η αλλαγή έγινε';
+        $sql = "UPDATE tutor_timeTable SET timeFrom=?, timeTo=? WHERE studentId = ? AND DAYOFWEEK(date) = DAYOFWEEK(?) AND date >= ?;";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssiss", $timeFrom, $timeTo, $studentId, $date, $date);
+
+        if ($stmt->execute()) {
+            if ($stmt->affected_rows > 0) {
+                echo "<div class='alert alert-success'>Η αλλαγή έγινε σε " . $stmt->affected_rows . " προγραμματισμένα μαθήματα.</div>";
+            } else {
+                echo "<div class='alert alert-info'>Δεν έγινε κάποια αλλαγή στα δεδομένα.</div>";
+            }
         } else {
-            //            echo 'Δεν έγινε αλλαγή ';
+            echo "<div class='alert alert-danger'>Σφάλμα: " . $stmt->error . "</div>";
         }
+        $stmt->close();
     }
 
-    public function deleteTimeTable($timeTableResource)
+    public function deleteTimeTable()
     {
         $conn = $this->connect();
-        $row = $timeTableResource->fetch_assoc();
-        session_start();
-        $studentId = $row['studentId'];
-        $date = $row['date'];
-        $timeFrom = $row['timeFrom'];
-        $timeTo = $row['timeTo'];
-        $sql = "DELETE FROM tutor_timeTable WHERE timeFrom='$timeFrom' AND timeTo='$timeTo' AND studentId = $studentId AND DAYOFWEEK(date) = DAYOFWEEK('$date') AND date >= '$date';";
-        //        echo $sql;
-        $result = $conn->query($sql);
-        //        echo $sql;
-        if ($result->num_rows > 0) {
-            echo 'Η διαγραφή έγινε';
+        $timeTableId = $_POST['timeTableId'];
+
+        $sql_select = "SELECT studentId, date, timeFrom, timeTo FROM tutor_timeTable WHERE timeTableId = ?";
+        $stmt_select = $conn->prepare($sql_select);
+        $stmt_select->bind_param("i", $timeTableId);
+        $stmt_select->execute();
+        $result = $stmt_select->get_result();
+
+        if ($row = $result->fetch_assoc()) {
+            $studentId = $row['studentId'];
+            $date = $row['date'];
+            $timeFrom = $row['timeFrom'];
+            $timeTo = $row['timeTo'];
+
+            $sql = "DELETE FROM tutor_timeTable WHERE timeFrom=? AND timeTo=? AND studentId = ? AND DAYOFWEEK(date) = DAYOFWEEK(?) AND date >= ?;";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("ssiss", $timeFrom, $timeTo, $studentId, $date, $date);
+
+            if ($stmt->execute()) {
+                if ($stmt->affected_rows > 0) {
+                    echo "<div class='alert alert-success'>Η διαγραφή έγινε σε " . $stmt->affected_rows . " προγραμματισμένα μαθήματα.</div>";
+                } else {
+                    echo "<div class='alert alert-info'>Δεν βρέθηκαν μαθήματα για διαγραφή.</div>";
+                }
+            } else {
+                echo "<div class='alert alert-danger'>Σφάλμα: " . $stmt->error . "</div>";
+            }
+            $stmt->close();
         } else {
-            //            echo 'Δεν έγινε αλλαγή ';
+            echo "<div class='alert alert-danger'>Δεν βρέθηκε το αρχικό μάθημα.</div>";
         }
+        $stmt_select->close();
     }
 
     public function addPhone()

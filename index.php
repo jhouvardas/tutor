@@ -249,9 +249,14 @@ $page->displayHeadMatter();
                     } elseif (isset($_POST['updateOneTimeTable'])) {
                         $db->updateOneDayTimeTable();
                         $form->getTimeTableForm();
+                    } elseif (isset($_POST['updateTimeTable'])) {
+                        $db->updateTimeTable();
+                        $form->getTimeTableForm();
+                    } elseif (isset($_POST['deleteOneTimeTable'])) {
+                        $db->deleteOneDayTimeTable();
+                        $form->getTimeTableForm();
                     } elseif (isset($_POST['deleteTimeTable'])) {
-                        $timeTableResource = $db->getOneStudentTimeTable();
-                        $db->deleteTimeTable($timeTableResource);
+                        $db->deleteTimeTable();
                         $form->getTimeTableForm();
                     } else {
                         $form->getTimeTableForm();
@@ -262,7 +267,7 @@ $page->displayHeadMatter();
                             window.history.replaceState(null, null, window.location.href);
                         }
                     </script>
-                <?php
+            <?php
                     break;
                 case 'timeTable':
                     if (isset($_POST['showTimeTable'])) {

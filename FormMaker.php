@@ -133,256 +133,7 @@ class FormMaker
     <?php
     }
 
-    public function addErgasiaForm()
-    {
-    ?>
-        <h5>Εισαγωγή Εργασίας Βοήθημα</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark">
-                <?php
-                $this->selectStudent();
-                $this->selectDate();
-                $this->selectAskiseisSource();
-                $this->selectAskiseisLocation();
-                //                $this->getAskiseis();
-                ?>
-                <button type="submit" class="btn btn-success" name="addErgasia">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
 
-    public function addAskiseisGroup()
-    {
-    ?>
-        <h5>Εισαγωγή Ομάδας Ασκήσεων</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark">
-                <div class="form-group">
-                    <label for="askiseisGroupName">Τίτλος:</label>
-                    <input type="text" class="form-control" id="lastName" placeholder="Δώστε τιτλο" name="askiseisGroupName" required>
-                </div>
-                <button type="submit" class="btn btn-success" name="addAskiseisGroup">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function addGroupDetailsForm()
-    {
-    ?>
-        <h5>Εισαγωγή ασκήσεων σε Ομάδα</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark">
-                <?php
-                $groupType = 0;
-                $this->selectGroup($groupType);
-                //                $this->selectDate();
-                $this->selectAskiseisSource();
-                //                $this->selectAskiseisLocation();
-                //                $this->getAskiseis();
-                ?>
-                <button type="submit" class="btn btn-success" name="updateGroup">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function addAskiseisToGroupForm()
-    {
-    ?>
-        <div class="container">
-            <h5>Νέα Άσκηση</h5>
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark">
-                <div class="form-group">
-                    <label for="askisi" class="form-label">Τιμή:</label>
-                    <input type="number" class="form-control" id="askisi" name="askisi" step="0.01" autofocus>
-                </div>
-                <button type="submit" class="btn btn-success" name="addAskisi">Προσθεσέ την</button>
-                <button type="submit" class="btn btn-success" name="submitAskiseisToGroup">Καταχώρηση Ασκήσεων</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function addAskiseisToErgasiaForm()
-    {
-    ?>
-        <div class="container">
-            <h5>Νέα Άσκηση</h5>
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark">
-                <div class="form-group">
-                    <label for="askisi" class="form-label">Τιμή:</label>
-                    <input type="number" class="form-control" id="askisi" name="askisi" step="0.01" autofocus>
-                </div>
-                <button type="submit" class="btn btn-success" name="addAskisi">Προσθεσέ την</button>
-                <button type="submit" class="btn btn-success" name="submitErgasia">Καταχώρηση Εργασίας</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function displayEditAskiseisArrayForm()
-    {
-        $askisi = new DbHandler;
-        session_start();
-    ?>
-        <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark">
-            <div class="table-responsive-sm">
-                <table class="table table-borderless table-striped">
-                    <thead class="table-success">
-                        <tr>
-                            <th>Ασκήσεις</th>
-                            <th><?php echo $_SESSION['studentName']; ?></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        $arrlength = count($_SESSION['askiseis']);
-                        for ($i = 0; $i < $arrlength; $i++) {
-                            $arrayElement = $_SESSION['askiseis'][$i];
-                            echo '<tr>';
-                            echo '<td>' . $arrayElement . '</td>' . '<td>'
-                        ?><button type="submit" class="btn btn-success btn-sm" name="deleteAskisi" value="'.<?php echo $i; ?>.'" "><img src=" images/trash-fill.svg" class="float-end"></button><?php
-                                                                                                                                                                                                //                            echo '<input type="hidden" name="askisiToDelete" value="$i">';
-                                                                                                                                                                                                echo '<input type="number" id="askisiToDelete" name="askisiToDelete" value="$i" style="display: none">';
-                                                                                                                                                                                                echo '</td>';
-                                                                                                                                                                                                echo '</tr>';
-                                                                                                                                                                                            }
-                                                                                                                                                                                                ?>
-                    </tbody>
-                </table>
-
-            </div>
-        </form>
-        <!--</div>-->
-    <?php
-    }
-
-    public function addTheoriaForm()
-    {
-    ?>
-        <h5>Εισαγωγή Θεωρίας</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark">
-                <?php
-                $this->selectStudent();
-                $this->selectDate();
-                ?>
-                <div class="form-group">
-                    <label for="book">Βιβλίο:</label>
-                    <select class="form-control" id="sel1" name="book">
-                        <option value="Βιβλίο Μαθητή">Βιβλίο Μαθητή</option>
-                        <option value="Συμπληρωματικό Υλικό">Συμπληρωματικό Υλικό</option>
-                        <option value="Οδηγίες Μελέτης">Οδηγίες Μελέτης</option>
-                        <option value="web site μαθήματος">web site μαθήματος</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="chapter">Κεφάλαιο:</label>
-                    <select class="form-control" id="chapter" name="chapter">
-                        <option></option>
-                        <option value="1">Κεφάλαιο 1</option>
-                        <option value="2">Κεφάλαιο 2</option>
-                        <option value="3">Κεφάλαιο 3</option>
-                        <option value="3">Κεφάλαιο 4</option>
-                        <option value="4">Κεφάλαιο 5</option>
-                        <option value="6">Κεφάλαιο 6</option>
-                        <option value="7">Κεφάλαιο 7</option>
-                        <option value="8">Κεφάλαιο 8</option>
-                        <option value="9">Κεφάλαιο 9</option>
-                        <option value="10">Κεφάλαιο 10</option>
-                        <!--<option value="10">Κεφάλαιο 11</option>-->
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="comment">Σημείωση</label>
-                    <textarea class="form-control" rows="4" name="comment" id="comment"></textarea>
-                </div>
-                <button type="submit" class="btn btn-success" name="theoria">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function addPanelliniesForm()
-    {
-    ?>
-        <h5>Εισαγωγή Άσκησης Πανελληνίων</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark">
-                <?php
-                $this->selectStudent();
-                $this->selectPanelliniesYear();
-                $this->selectThema();
-                ?>
-                <div class="form-group">
-                    <label for="lykeio">Λύκειο</label>
-                    <select class="form-control" id="sel1" name="lykeio">
-                        <option value="Ημερήσιο">Ημερήσιο</option>
-                        <option value="Εσπερινό">Εσπερινό</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="period">Περίοδος</label>
-                    <select class="form-control" id="sel1" name="period">
-                        <option value="Απολυτήριες">Απολυτήριες</option>
-                        <option value="Επαναληπτικές">Επαναληπτικές</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="erotima">Ερώτημα</label>
-                    <input type="text" class="form-control" name="erotima">
-                </div>
-                <?php
-                $this->selectDate();
-                $this->selectAskiseisLocation();
-                ?>
-                <button type="submit" class="btn btn-success" name="panellinies">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function addPanelliniesToGroupForm()
-    {
-    ?>
-        <h5>Εισαγωγή Άσκησης Πανελληνίων</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark">
-                <?php
-                $groupType = 1;
-                $this->selectGroup($groupType);
-                $this->selectPanelliniesYear();
-                $this->selectThema();
-                ?>
-                <div class="form-group">
-                    <label for="lykeio">Λύκειο</label>
-                    <select class="form-control" id="sel1" name="lykeio">
-                        <option value="Ημερήσιο">Ημερήσιο</option>
-                        <option value="Εσπερινό">Εσπερινό</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="period">Περίοδος</label>
-                    <select class="form-control" id="sel1" name="period">
-                        <option value="Απολυτήριες">Απολυτήριες</option>
-                        <option value="Επαναληπτικές">Επαναληπτικές</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="erotima">Ερώτημα</label>
-                    <input type="text" class="form-control" name="erotima">
-                </div>
-                <?php
-                //                $this->selectDate();
-                //                $this->selectAskiseisLocation();
-                ?>
-                <button type="submit" class="btn btn-success" name="panelliniesToGroup">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
 
     public function addLessonForm()
     {
@@ -478,9 +229,13 @@ class FormMaker
                     </div>
                     <div class="col">
                         <div class="form-group">
-                            <button type="submit" class="btn btn-success" name="deleteTimeTable">Διαγραφή</button>
+                            <button type="submit" class="btn btn-danger" name="deleteOneTimeTable" onclick="return confirm('Να διαγραφεί μόνο αυτό το μάθημα;');">Διαγραφή ενός</button>
                         </div>
-                        2
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-danger" name="deleteTimeTable" onclick="return confirm('Να διαγραφούν ΟΛΑ τα επαναλαμβανόμενα μαθήματα από εδώ και πέρα;');">Διαγραφή όλων</button>
+                        </div>
                     </div>
                 </div>
             </form>
@@ -491,8 +246,6 @@ class FormMaker
     public function editTimeTableForm($lessonTimeTableResource)
     {
         $row = $lessonTimeTableResource->fetch_assoc();
-        session_start();
-        $_SESSION['studentId'] = $row['studentId'];
     ?>
         <h5>Προγραμματισμός μαθήματος</h5>
         <div class="container">
@@ -722,20 +475,6 @@ class FormMaker
     <?php
     }
 
-    public function displayAskiseisGroupForm($groupType)
-    {
-    ?>
-        <h5>Αναζήτηση Ομάδας Ασκήσεων</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark">
-                <?php
-                $this->selectGroup($groupType);
-                ?>
-                <button type="submit" class="btn btn-success" name="displayGroup">Επιλογή</button>
-            </form>
-        </div>
-    <?php
-    }
 
     public function frontPageForm()
     {
@@ -824,72 +563,6 @@ class FormMaker
     <?php
     }
 
-    public function getStudentAskiseisForm()
-    {
-    ?>
-        <h5>Αναζήτηση Ασκήσεων</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark">
-                <?php
-                $this->selectStudent();
-                $this->selectDate();
-                $this->selectToDateNotRequired();
-                $this->selectAskiseisLocation();
-                ?>
-                <button type="submit" class="btn btn-success" name="getStudentsAskiseis">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function getStudentPanelliniesForm()
-    {
-    ?>
-        <h5>Αναζήτηση Ασκήσεων</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark">
-                <?php
-                $this->selectStudent();
-                $this->selectDate();
-                $this->selectAskiseisLocation();
-                ?>
-                <button type="submit" class="btn btn-success" name="getStudentsPanellinies">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function getPanelliniesInGroupForm()
-    {
-    ?>
-        <h5>Αναζήτηση Πανελληνίων</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark">
-                <?php
-                $groupType = '1';
-                $this->selectGroup($groupType);
-                ?>
-                <button type="submit" class="btn btn-success" name="getPanelliniesGroup">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function getStudentTheoriaForm()
-    {
-    ?>
-        <h5>Αναζήτηση Θεωρίας</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark">
-                <?php
-                $this->selectStudent();
-                $this->selectDate();
-                ?>
-                <button type="submit" class="btn btn-success" name="getStudentsTheoria">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
 
     public function selectDate()
     {
@@ -1005,93 +678,6 @@ class FormMaker
     <?php
     }
 
-    public function selectGroup($groupType)
-    {
-        $groupList = new DbHandler();
-    ?>
-        <div class="form-group">
-            <label for="student">Ομάδα Ασκήσεων:</label>
-            <select class="form-control" id="askiseisGroupId" name="askiseisGroupId" required>
-                <?php
-                $result = $groupList->getGroups($groupType);
-                echo '<option value=""></option>';
-                while ($row = $result->fetch_assoc()) {
-                    $askiseisGroupId = $row['askiseisGroupId'];
-                    if ($askiseisGroupId == $_POST['askiseisGroupId']) {
-                        $selected = 'selected';
-                    }
-                    echo '<option value= "' . $askiseisGroupId . ' " ' . $selected . '>' . $row['askiseisGroupName'] . '</option>';
-                }
-                ?>
-            </select>
-        </div>
-    <?php
-    }
-
-    public function selectPanelliniesYear()
-    {
-    ?>
-        <div class="form-group">
-            <lable for="panelliniesYear">Έτος:</lable>
-            <select class="form-control" id="panelliniesYear" name="panelliniesYear">
-                <?php
-                $year = 2001;
-                echo '<option></option>';
-                while ($year <= 2021) {
-                    echo "<option value=$year>$year</option>";
-                    $year++;
-                }
-                ?>
-            </select>
-        </div>
-    <?php
-    }
-
-    public function selectThema()
-    {
-    ?>
-        <div class="form-group">
-            <lable for="thema">Θέμα:</lable>
-            <select class="form-control" id="thema" name="thema">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="όλα">όλα</option>
-            </select>
-        </div>
-    <?php
-    }
-
-    public function selectAskiseisSource()
-    {
-    ?>
-        <div class="form-group">
-            <lable for="source">Πηγή:</lable>
-            <select class="form-control" id="source" name="askiseisSource" required>
-                <option></option>
-                <option value="Κοψίνης 1">Κοψίνης 1</option>
-                <option value="Κοψίνης 2">Κοψίνης 2</option>
-                <option value="Κοψίνης 3">Κοψίνης 3</option>
-                <option value="Πανελλήνιες">Πανελλήνιες</option>
-            </select>
-        </div>
-    <?php
-    }
-
-    public function selectAskiseisLocation()
-    {
-    ?>
-        <div class="form-group">
-            <label for="location">Τοποθεσία</label>
-            <select class="form-control" id="sel1" name="location">
-                <option value="">Όλες</option>
-                <option value="Μάθημα">Μάθημα</option>
-                <option value="Σπίτι">Σπίτι</option>
-            </select>
-        </div>
-    <?php
-    }
 
     public function selectStudentOnChangeSubmit()
     {
