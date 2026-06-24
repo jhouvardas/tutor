@@ -1,15 +1,17 @@
 <?php
 
-class MailMaker {
+class MailMaker
+{
 
-    public function sendMail($body, $email) {
+    public function sendMail($body, $email, $subject = 'Ασκήσεις')
+    {
         define("PHPMAILER", true);
-        require 'phpmailer/PHPMailerAutoload.php';
-        include('phpmailer/config.inc.php');
+        require_once 'phpmailer/PHPMailerAutoload.php';
+        include_once 'phpmailer/config.inc.php';
         $name = 'Γιάννης';
-        $mail->Subject = 'Ασκήσεις';
+        $mail->Subject = $subject;
         $mail->Body = $body;
-//        $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+        //        $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
         $mail->addAddress($email, $name);
         $mail->addAddress("jhouvardas@jhouv.eu", $name);
         $mail->addAddress("ioannishouvardas@gmail.com", $name);
@@ -21,7 +23,43 @@ class MailMaker {
         }
     }
 
-    public function makeErgasiaEmail($arrayOfAskiseis, $name) {
+    public function sendBulkGroupMails(array $students, string $subject, string $groupName, string $messageHtml): array
+    {
+        if (!defined("PHPMAILER")) define("PHPMAILER", true);
+        require_once 'phpmailer/PHPMailerAutoload.php';
+        include 'phpmailer/config.inc.php';
+        $mail->SMTPKeepAlive = true;
+
+        $successful = [];
+        $failed = [];
+
+        foreach ($students as $student) {
+            if (empty($student['email'])) {
+                $failed[] = ['name' => $student['name'] . ' ' . $student['lastName'], 'email' => 'Δεν υπάρχει email', 'error' => 'Δεν έχει δηλωθεί email.'];
+                continue;
+            }
+            $body = "<div style='font-family:Arial,sans-serif;max-width:600px;padding:20px;border:1px solid #eee;border-radius:10px;'>
+                <h2 style='color:#007bff;'>Ενημέρωση: " . htmlspecialchars($groupName) . "</h2>
+                <p>Γεια σου <b>" . htmlspecialchars($student['name']) . "</b>,</p>
+                <div style='padding:15px;background:#f8f9fa;border-radius:5px;margin-bottom:20px;'>$messageHtml</div>
+                <p>Καλή συνέχεια!</p></div>";
+            $mail->clearAddresses();
+            $mail->Subject = $subject;
+            $mail->Body = $body;
+            $mail->isHTML(true);
+            $mail->addAddress($student['email']);
+            if ($mail->send()) {
+                $successful[] = ['name' => $student['name'] . ' ' . $student['lastName'], 'email' => $student['email']];
+            } else {
+                $failed[] = ['name' => $student['name'] . ' ' . $student['lastName'], 'email' => $student['email'], 'error' => 'Σφάλμα αποστολής'];
+            }
+        }
+        $mail->smtpClose();
+        return ['successful' => $successful, 'failed' => $failed];
+    }
+
+    public function makeErgasiaEmail($arrayOfAskiseis, $name)
+    {
         $mail = '<!DOCTYPE html>';
         $mail .= '<html>';
         $mail .= '<head>';
@@ -63,54 +101,5 @@ class MailMaker {
         return $mail;
     }
 
-   
-
-    public function makePanelliniesEmail($panelliniesResource) {
-        $panelliniesMail = '<!DOCTYPE html>';
-        $panelliniesMail .= '<html>';
-        $panelliniesMail .= '<head>';
-        $panelliniesMail .= '<meta charset="utf-8">';
-        $panelliniesMail .= '<meta name="viewport" content="width=device-width, initial-scale=1">';
-        $panelliniesMail .= '</head>';
-        $panelliniesMail .= '<body>';
-        $panelliniesMail .= '<h1>Εργασία</h1>';
-        $panelliniesMail .= '<table  style="border-collapse: collapse; width: 250px; text-align: left;font-family: Arial, Helvetica, sans-serif;background-color:LightGray; "> ';
-        $panelliniesMail .= '<thead style ="background-color: lightgreen; padding: 15px;">';
-        $panelliniesMail .= '<tr>';
-        $panelliniesMail .= '<th></th>';
-        $panelliniesMail .= '<th>Ημερ.</th>';
-        $panelliniesMail .= '<th>Όνομα</th>';
-        $panelliniesMail .= '<th>Χρον</th>';
-        $panelliniesMail .= '<th>Λύκειο</th>';
-        $panelliniesMail .= '<th>Θέμ</th>';
-        $panelliniesMail .= '<th>Ερώτ</th>';
-        $panelliniesMail .= '<th></th>';
-        $panelliniesMail .= '</tr>';
-        $panelliniesMail .= '</thead>';
-        $panelliniesMail .= '<tbody style="background-color:LightGray; ">';
-        $i = 1;
-        reset($row);
-        while ($row = $panelliniesResource->fetch_assoc()) {
-            $panelliniesMail .= '<tr>';
-            $panelliniesMail .= '<td>' . $i . '</td>';
-            $date = date_create($row['date']);
-            $panelliniesMail .= '<td>' . date_format($date, " d/m/y") . '</td>';
-            $panelliniesMail .= '<td>' . $row['name'] . '</td>';
-            $panelliniesMail .= '<td>' . $row['panelliniesYear'] . '</td>';
-            $panelliniesMail .= '<td>' . $row['lykeio'] . '</td>';
-            $panelliniesMail .= '<td>' . $row['thema'] . '</td>';
-            $panelliniesMail .= '<td>' . $row['erotima'] . '</td>';
-            $panelliniesMail .= '<td>' . $row['location'] . '</td>';
-            $panelliniesMail .= '</tr>';
-            $i++;
-        }
-        $panelliniesMail .= '</tbody>';
-        $panelliniesMail .= '</table>';
-        $panelliniesMail .= '</div>';
-        $panelliniesMail .= '</body>';
-        $panelliniesMail .= '</html>';
-        echo $panelliniesMail;
-        return $panelliniesMail;
-    }
 
 }

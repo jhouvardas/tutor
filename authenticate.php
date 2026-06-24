@@ -10,7 +10,7 @@ session_start();
 if (isset($_POST['login'])) {
     //echo 'eeeeeeeeeeeeeeee';
     $username = htmlspecialchars($_POST['username']);
-    $password = htmlspecialchars($_POST['password']);
+    $password = $_POST['password'];
     if ($db->login($username, $password) == true) {
         //session_regenerate_id();
         $_SESSION['loggedin'] = TRUE;

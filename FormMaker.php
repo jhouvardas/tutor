@@ -1,575 +1,25 @@
 <?php
 
+require_once 'DbHandler.php';
+require_once 'StudentFormTrait.php';
+require_once 'TimeTableFormTrait.php';
+require_once 'LessonsFormTrait.php';
+require_once 'PaymentFormTrait.php';
+
 class FormMaker
 {
-
-    public function addNewStudentForm()
-    {
-?>
-        <div class="container">
-            <h5>Εισαγωγή Μαθητή</h5>
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark" onSubmit="return confirm('Είσαι σίγουρος?');">
-                <div class="form-group">
-                    <label for="name">Όνομα:</label>
-                    <input type="text" class="form-control" id="name" placeholder="Δώστε όνομα" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="lastName">Επώνυμο:</label>
-                    <input type="text" class="form-control" id="lastName" placeholder="Δώστε Επώνυμο" name="lastName" required>
-                </div>
-                <div class="form-group">
-                    <label for="address">Διεύθυνση:</label>
-                    <input type="text" class="form-control" id="address" placeholder="Δώστε Διεύθυνση" name="address" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">email:</label>
-                    <input type="email" class="form-control" id="email" placeholder="Δώστε email" name="email">
-                </div>
-                <div class="form-group">
-                    <label for="tel">τηλέφωνο:</label>
-                    <input type="tel" class="form-control" id="phone" placeholder="Δώστε τηλέφωνο" name="phone">
-                </div>
-                <div class="form-group">
-                    <label for="birthday">Ημερομηνία γέννησης:</label>
-                    <input type="date" class="form-control" id="birthday" placeholder="Ημερομηνία Γέννησης" name="birhtday">
-                </div>
-                <div class="form-group">
-                    <label for=" school">Σχολείο Μαθητή:</label>
-                    <select class="form-control" id=" school" name="school" required>
-                        <option value=""></option>
-                        <option value="ΓΕΛ Καρλοβάσου">ΓΕΛ Καρλοβάσου</option>
-                        <option value="ΓΕΛ Μαραθοκάμπου">ΓΕΛ Μαραθοκάμπου</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="note">Σχολές</label>
-                    <textarea class="form-control" rows="4" name="target" id="note"></textarea>
-                </div>
-                <button type="submit" class="btn btn-success">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function editStudentForm()
-    {
-        $db = new DbHandler();
-        $studentResource = $db->getOneStudentsDetails();
-        $row = $studentResource->fetch_assoc()
-    ?>
-        <div class="container">
-            <h5> Διόρθωση Μαθητή</h5>
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark" onSubmit="return confirm('Είσαι σίγουρος?');">
-                <input type="hidden" name="studentId" value="<?php echo $row['studentId']; ?>">
-                <div class="form-group">
-                    <label for="name">Όνομα:</label>
-                    <input type="text" class="form-control" id="name" placeholder="Δώστε όνομα" name="name" value="<?php echo $row['name']; ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="lastName">Επώνυμο:</label>
-                    <input type="text" class="form-control" id="lastName" placeholder="Δώστε Επώνυμο" name="lastName" value="<?php echo $row['lastName']; ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="address">Διεύθυνση:</label>
-                    <input type="text" class="form-control" id="address" placeholder="Δώστε Διεύθυνση" name="address" value="<?php echo $row['address']; ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">email:</label>
-                    <input type="email" class="form-control" id="email" placeholder="Δώστε email" name="email" value="<?php echo $row['email']; ?>">
-                </div>
-                <div class="form-group">
-                    <label for="tel">τηλέφωνο:</label>
-                    <input type="tel" class="form-control" id="phone" placeholder="Δώστε τηλέφωνο" name="phone" value="<?php echo $row['phone']; ?>">
-                </div>
-                <div class="form-group">
-                    <label for="birthday">Ημερομηνία γέννησης:</label>
-                    <input type="date" class="form-control" id="birthday" placeholder="Ημερομηνία Γέννησης" name="birhtday" value="<?php echo $row['birthday']; ?>">
-                </div>
-                <div class="form-group">
-                    <label for="note">Σχολές</label>
-                    <textarea class="form-control" rows="4" name="target" id="note"><?php echo $row['target']; ?></textarea>
-                </div>
-                <!--                <div class="form-group">         
-                                    <label for=" school">Σχολείο Μαθητή:</label>             
-                                    <select class="form-control" id=" school" name="school" required> 
-                                        <option value=""></option>
-                                        <option value="ΓΕΛ Καρλοβάσου">ΓΕΛ Καρλοβάσου</option>                 
-                                        <option value="ΓΕΛ Μαραθοκάμπου">ΓΕΛ Μαραθοκάμπου</option>                                     
-                                    </select>             
-                                </div>                         -->
-                <button type="submit" class="btn btn-success" name="updateStudent">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function deleteStudentForm()
-    {
-    ?>
-        <div class="container mt-4">
-            <h5 class="bg-danger text-white p-3 rounded shadow-sm">Διαγραφή Μαθητή</h5>
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?>" method="post" class="bg-light p-4 border shadow-sm rounded" onSubmit="return confirm('ΠΡΟΣΟΧΗ: Είστε σίγουρος ότι θέλετε να διαγράψετε οριστικά αυτόν τον μαθητή και όλα τα δεδομένα του;');">
-                <?php $this->selectStudent(); ?>
-                <button type="submit" class="btn btn-danger mt-3 shadow" name="deleteStudentBtn">Οριστική Διαγραφή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function addTelephoneForm()
-    {
-    ?>
-        <h5>Εισαγωγή τηλεφώνου</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark">
-                <?php $this->selectStudent(); ?>
-                <div class="form-group">
-                    <label for="telephone">Τηλέφωνο:</label>
-                    <input type="tel" class="form-control" id="phone" placeholder="Δώστε τηλέφωνο" name="phone">
-                </div>
-                <button type="submit" class="btn btn-success">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-
-
-    public function addLessonForm()
-    {
-    ?>
-        <h5>Εισαγωγή μαθήματος</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark" onSubmit="return confirm('Είσαι σίγουρος?');">
-                <?php $this->selectStudent(); ?>
-                <?php $this->selectDate(); ?>
-                <div class="form-group">
-                    <label for="duration">Διάρκεια:</label>
-                    <select class="form-control" id="sel1" name="duration">
-                        <option value="1.5">1.5</option>
-                        <option value="1">1</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="location">Τοποθεσία:</label>
-                    <select class="form-control" id="location" name="location">
-                        <option value="Live">Live</option>
-                        <option value="Zoom">Zoom</option>
-                    </select>
-                </div>
-                <button type="submit" name="addNewLesson" class="btn btn-success">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-        //$this->addFormValidation();
-    }
-
-    public function addTimeTableForm()
-    {
-    ?>
-        <h5>Προγραμματισμός μαθήματος</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark" onSubmit="return confirm('Είσαι σίγουρος?');">
-                <?php $this->selectStudent(); ?>
-                <div class="form-group">
-                    <label for="dateFrom">Από Ημερομηνία:</label>
-                    <input type="date" class="form-control" id="dateFrom" name="dateFrom" required>
-                </div>
-                <?php $this->selectToDateNotRequired(); ?>
-                <div class="form-group">
-                    <label for="timeFrom">Από:</label>
-                    <input type="time" class="form-control" id="timeFrom" name="timeFrom" required>
-                </div>
-                <div class="form-group">
-                    <label for="timeΤο">Μέχρι:</label>
-                    <input type="time" class="form-control" id="timeΤο" name="timeTo" required>
-                </div>
-                <button type="submit" class="btn btn-success" name="setTimeTable">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function getTimeTableForm()
-    {
-    ?>
-        <h5>Αναζήτηση προγράμματος</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark">
-                <?php $this->selectStudent(); ?>
-                <button type="submit" class="btn btn-success" name="findTimeTable">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function selectTimeTableForm($timeTableResource)
-    {
-    ?>
-        <h5>Αναζήτηση προγράμματος</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark">
-                <div class="form-group">
-                    <label for="student">Μάθημα:</label>
-                    <select class="form-control" id="timeTableId" name="timeTableId" required>
-                        <?php
-                        while ($row = $timeTableResource->fetch_assoc()) {
-                            $date = date_create($row['date']);
-                            $time = $row['timeFrom'];
-                            echo '<option value="' . $row['timeTableId'] . '">' . date_format($date, "l d/m/y") . '  ' . date('H:i', strtotime($time)) . '</option>';
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-success" name="editOne">Διόρθωση</button>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-danger" name="deleteOneTimeTable" onclick="return confirm('Να διαγραφεί μόνο αυτό το μάθημα;');">Διαγραφή ενός</button>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-danger" name="deleteTimeTable" onclick="return confirm('Να διαγραφούν ΟΛΑ τα επαναλαμβανόμενα μαθήματα από εδώ και πέρα;');">Διαγραφή όλων</button>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function editTimeTableForm($lessonTimeTableResource)
-    {
-        $row = $lessonTimeTableResource->fetch_assoc();
-    ?>
-        <h5>Προγραμματισμός μαθήματος</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark" onSubmit="return confirm('Να γίνει η αλλαγή?');">
-                <input type="hidden" name="timeTableId" value="<?php echo $row['timeTableId']; ?>">
-                <input type="hidden" name="studentId" value="<?php echo $row['studentId']; ?>">
-                <div class="form-group">
-                    <label for="date">Ημερομηνία:</label>
-                    <input type="date" class="form-control" id="dateFrom" name="date" value="<?php echo $row['date']; ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="timeFrom">Από:</label>
-                    <input type="time" class="form-control" id="timeFrom" name="timeFrom" value="<?php echo $row['timeFrom']; ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="timeΤο">Μέχρι:</label>
-                    <input type="time" class="form-control" id="timeΤο" name="timeTo" value="<?php echo $row['timeTo']; ?>" required>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <button type="submit" class="btn btn-success" name="updateOneTimeTable">Διόρθωση σε ένα</button>
-                    </div>
-                    <div class="col">
-                        <button type="submit" class="btn btn-success" name="updateTimeTable">Διόρθωση σε όλα</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function showTimeTableForm()
-    {
-    ?>
-        <h5>Αναζήτηση προγράμματος</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark">
-                <div class="form-group">
-                    <label for="date">Ημερομηνία:</label>
-                    <input type="date" class="form-control" id="date" name="date" required>
-                </div>
-                <button type="submit" class="btn btn-success" name="showTimeTable">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function addNoteForm()
-    {
-    ?>
-        <h5>Νέα Σημείωση</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark" onSubmit="return confirm('Είσαι σίγουρος?');">
-                <?php $this->selectStudent(); ?>
-                <?php $this->selectDate(); ?>
-                <div class="form-group">
-                    <label for="note">Σημείωση</label>
-                    <textarea class="form-control" rows="4" name="note" id="note"></textarea>
-                </div>
-                <button type="submit" class="btn btn-success" name="submitNote">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function editNoteForm($noteResource)
-    {
-    ?>
-        <h5>Διόρθωση Σημείωσης</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark" onSubmit="return confirm('Είσαι σίγουρος?');">
-
-                <div class="form-group">
-                    <label for="note">Σημείωση</label>
-                    <textarea class="form-control" rows="4" name="note" id="note">
-                        <?php
-                        while ($row = $noteResource->fetch_assoc()) {
-                            echo $row['note'];
-                            $noteId = $row['noteId'];
-                        }
-                        ?>
-                    </textarea>
-                    <input type="hidden" id="noteId" name="noteId" value="<?php echo $noteId; ?>">
-                </div>
-                <button type="submit" class="btn btn-success" name="updateNote">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function addApousiaForm()
-    {
-    ?>
-        <h5>Νέα Απουσία</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark" onSubmit="return confirm('Είσαι σίγουρος?');">
-                <?php $this->selectStudent(); ?>
-                <?php $this->selectDate(); ?>
-                <div class="form-group">
-                    <label for="note">Αιτιολογία</label>
-                    <textarea class="form-control" rows="4" name="reason" id="note"></textarea>
-                </div>
-                <button type="submit" class="btn btn-success" name="submitApousia">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function deleteLessonForm()
-    {
-    ?>
-        <h5>Διαγραφή μαθήματος</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark" onSubmit="return confirm('Να γίνει η διαγραφή?');">
-                <?php $this->selectStudentOnChangeSubmit(); ?>
-                <?php //  $this->selectDate();   
-                ?>
-                <?php $this->selectLesson(); ?>
-
-                <button type="submit" class="btn btn-success">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function deletePaymentForm()
-    {
-    ?>
-        <h5>Διαγραφή πληρωμής</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark" onSubmit="return confirm('Να γίνει η διαγραφή?');">
-                <?php $this->selectStudentOnChangeSubmit(); ?>
-                <?php $this->selectPayment1() ?>
-                <button type="submit" class="btn btn-success" name="deletePayment">Υποβολή</button>
-            </form>
-
-        </div>
-    <?php
-    }
-
-    public function addPaymentForm()
-    {
-    ?>
-        <h5>Εισαγωγή πληρωμής</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark" onSubmit="return confirm('Είσαι σίγουρος?');">
-                <?php $this->selectStudent(); ?>
-                <?php $this->selectDate(); ?>
-                <div class="form-group">
-                    <label for="payment">Ποσό:</label>
-                    <input type="number" class="form-control" id="payment" placeholder="Δώστε ποσό" name="payment" required>
-                </div>
-                <button type="submit" class="btn btn-success" name="submitPayment">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function getStudentLessonsForm()
-    {
-    ?>
-        <h5>Αναζήτηση μαθημάτων</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark">
-                <?php $this->selectStudent(); ?>
-                <?php $this->selectDate(); ?>
-                <?php $this->selectToDateNotRequired(); ?>
-                <div class="form-group">
-                    <div class="form-check">
-                        <label class="form-check-label" for="lastName   ">
-                            <input type="checkbox" class="form-check-input" id="lastName" name="lastName" value="yes">Επώνυμο
-                        </label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="form-check">
-                        <label class="form-check-label" for="radio1">
-                            <input type="checkbox" class="form-check-input" id="showLocation" name="location" value="yes">Τοποθεσία
-                        </label>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-success" name="getStudentLessons">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function getStudentNotesForm()
-    {
-    ?>
-        <h5>Αναζήτηση Σημειώσεων</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark">
-                <?php $this->selectStudent(); ?>
-                <?php $this->selectDateNotRequired(); ?>
-                <?php // $this->selectToDateNotRequired();  
-                ?>
-                <button type="submit" class="btn btn-success" name="getStudentNotes">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function displayEditDeleteStudentNotes($studentNotesResource)
-    {
-    ?>
-        <h5>Αναζήτηση Σημειώσεων</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark" onSubmit="return confirm('Είσαι σίγουρος?');">
-                <?php
-                $i = 1;
-                while ($row = $studentNotesResource->fetch_assoc()) {
-
-                    echo '<div class="form-check">';
-                    echo '<label class="form-check-label" for="check1">';
-                    $date = date_create($row['date']);
-                    echo ' <input type="radio" class="form-check-input" name="noteId" value="' . $row['noteId'] . '">' . date_format($date, "D d/m/y") . ' ' . $row['note'];
-                    echo ' </div>';
-                    echo '<hr>';
-                    $i++;
-                }
-                ?>
-                <button type="submit" class="btn btn-success" name="editStudentNote">Διόρθωση</button>
-                <button type="submit" class="btn btn-success" name="deleteNote">Διαγραφή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-
-    public function frontPageForm()
-    {
-        $db = new DbHandler();
-    ?>
-        <!--<div class="container">-->
-        <h5>Ημερήσιο Πρόγραμμα</h5>
-        <!--<div class="table-responsive-sm">-->
-        <table class="table table-borderless table-striped">
-            <thead class="table-success">
-                <tr>
-                    <th>Όνομα</th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <?php
-                $studentsResource = $db->getStudentsWithLesson();
-                while ($row = $studentsResource->fetch_assoc()) {
-                ?>
-                    <!--<input type="hidden" name="studentId" value="<?php // $row['studentId']  
-                                                                        ?>">-->
-                    <tr>
-                        <td> <?php echo $row['name'] ?> </td>
-                        <td><button class="btn btn-success" onclick="document.location = 'index.php?action=lesson&studentId=<?php echo $row['studentId']; ?>'">Μάθημα</button></td>
-                        <td><button class="btn btn-danger" onclick="document.location = 'index.php?action=apousia&studentId=<?php echo $row['studentId']; ?>'">Απουσία</button></td>
-                    </tr>
-                <?php
-                }
-                ?>
-                <!--<button type="submit" class="btn btn-success" name="updateStudent">Υποβολή</button>-->
-            </tbody>
-        </table>
-
-        <!--</div>-->
-
-        <!--</div>-->
-    <?php
-    }
-
-    public function getStudentMathimataApousiesForm()
-    {
-    ?>
-        <h5>Μαθήματα - Απουσίες</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post">
-                <?php $this->selectStudent(); ?>
-                <?php $this->selectDateNotRequired(); ?>
-                <?php // $this->selectToDateNotRequired(); 
-                ?>
-                <button type="submit" class="btn btn-success" name="getStudentMathimataApousies">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function getStudentApousiesForm()
-    {
-    ?>
-        <h5>Αναζήτηση Απουσιών</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post">
-                <?php $this->selectStudent(); ?>
-                <?php $this->selectDateNotRequired(); ?>
-                <?php // $this->selectToDateNotRequired(); 
-                ?>
-                <button type="submit" class="btn btn-success" name="getStudentApousies">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
-    public function getStudentPaymentsForm()
-    {
-    ?>
-        <h5>Αναζήτηση πληρωμών</h5>
-        <div class="container">
-            <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark">
-                <?php $this->selectStudent(); ?>
-                <?php $this->selectDateNotRequired(); ?>
-                <button type="submit" class="btn btn-success" name="getStudentPayments">Υποβολή</button>
-            </form>
-        </div>
-    <?php
-    }
-
+    use StudentFormTrait;
+    use TimeTableFormTrait;
+    use LessonsFormTrait;
+    use PaymentFormTrait;
 
     public function selectDate()
     {
-    ?>
+        $defaultDate = isset($_POST['date']) ? $_POST['date'] : (isset($_GET['date']) ? $_GET['date'] : date("Y-m-d"));
+?>
         <div class="form-group">
             <label for="date">Ημερομηνία:</label>
-            <input type="date" class="form-control" id="date" value="<?php echo date("Y-m-d"); ?>" name="date" required>
+            <input type="date" class="form-control" id="date" value="<?php echo $defaultDate; ?>" name="date" required>
         </div>
     <?php
     }
@@ -639,7 +89,7 @@ class FormMaker
     ?>
         <div class="form-group">
             <label for="lesson"> Διαγραφή πληρωμής:</label>
-            <select class="form-control" id="studentId" name="lessonId" required ">             
+            <select class="form-control" id="studentId" name="lessonId" required ">
                 <?php
                 $result = $paymentsList->getStudentPayments1();
                 echo '<option value=""></option>';
@@ -647,15 +97,15 @@ class FormMaker
                     echo '<option value="' . $row['lessonId'] . '">' . $row['date'] . ' Ποσό ' . $row['payment'] . '€' . '</option>';
                 }
                 ?>
-            </select>             
+            </select>
         </div>
-        <?php
+    <?php
     }
 
     public function selectStudent()
     {
         $studentList = new DbHandler();
-        ?>
+    ?>
         <div class=" form-group">
                 <label for="student">Μαθητής:</label>
                 <select class="form-control" id="studentId" name="studentId" required>
@@ -677,7 +127,6 @@ class FormMaker
         </div>
     <?php
     }
-
 
     public function selectStudentOnChangeSubmit()
     {
@@ -726,27 +175,56 @@ class FormMaker
     <?php
     }
 
-    public function getStudentBalanceForm()
+    public function frontPageForm()
     {
+        $db = new DbHandler();
     ?>
-        <h5>Υπόλοιπο μαθητή</h5>
-        <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark">
-            <?php $this->selectStudent(); ?>
-
-            <button type="submit" class="btn btn-success" name="studentBalance">Υποβολή</button>
-        </form>
-    <?php
-    }
-
-    public function getStudentBalanceSheetForm()
-    {
-    ?>
-        <h5>Καρτέλα μαθητή</h5>
-        <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?> " method="post" class="bg-light text-dark">
-            <?php $this->selectStudent(); ?>
-            <?php $this->selectDateNotRequired(); ?>
-            <button type="submit" class="btn btn-success" name="showStudentBalanceSheet">Υποβολή</button>
-        </form>
+        <h5>Εκκρεμότητες Προγράμματος</h5>
+        <div class="table-responsive-sm">
+            <table class="table table-borderless table-striped">
+                <thead class="table-success">
+                    <tr>
+                        <th>Όνομα</th>
+                        <th>Ημερομηνία</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $studentsResource = $db->getStudentsWithLesson();
+                    if ($studentsResource && $studentsResource->num_rows > 0) {
+                        while ($row = $studentsResource->fetch_assoc()) {
+                            $isPast = (strtotime($row['date']) < strtotime(date('Y-m-d')));
+                            $rowClass = $isPast ? ' class="table-danger font-weight-bold"' : '';
+                            $dateStr = date('d/m/Y', strtotime($row['date']));
+                            $timeStr = date('H:i', strtotime($row['timeFrom']));
+                    ?>
+                            <tr<?php echo $rowClass; ?>>
+                                <td> <?php echo $row['name'] . ' ' . $row['lastName']; ?> </td>
+                                <td>
+                                    <?php
+                                    if ($isPast) {
+                                        echo '⚠️ <span class="text-danger">' . $dateStr . ' (' . $timeStr . ')</span>';
+                                    } else {
+                                        echo $dateStr . ' (' . $timeStr . ')';
+                                    }
+                                    ?>
+                                </td>
+                                <td><button class="btn btn-success" onclick="document.location = 'index.php?action=lesson&studentId=<?php echo $row['studentId']; ?>&date=<?php echo $row['date']; ?>'">Μάθημα</button></td>
+                                <td><button class="btn btn-danger" onclick="document.location = 'index.php?action=apousia&studentId=<?php echo $row['studentId']; ?>&date=<?php echo $row['date']; ?>'">Απουσία</button></td>
+                                <td><button class="btn btn-warning" onclick="document.location = 'index.php?action=cancelLesson&studentId=<?php echo $row['studentId']; ?>&date=<?php echo $row['date']; ?>'">Ακύρωση</button></td>
+                                </tr>
+                        <?php
+                        }
+                    } else {
+                        echo '<tr><td colspan="5" class="text-center font-weight-bold text-success">Δεν υπάρχουν εκκρεμότητες! 🎉</td></tr>';
+                    }
+                        ?>
+                </tbody>
+            </table>
+        </div>
     <?php
     }
 
@@ -772,7 +250,6 @@ class FormMaker
         $this->addFormValidation();
     }
 
-    // JavaScript Validation που χρησιμοποιείται σε όλες τις φόρμες
     public function addFormValidation()
     {
     ?>
@@ -792,6 +269,119 @@ class FormMaker
                     });
                 }, false);
             })();
+        </script>
+    <?php
+    }
+
+    public function manageGroupsForm($groups, $students, $assignments)
+    {
+    ?>
+        <div class="container mt-4">
+            <h4>Διαχείριση Ομάδων</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-dark text-white">Δημιουργία Ομάδας</div>
+                        <form action="index.php?action=saveGroup" method="POST" class="card-body">
+                            <input type="text" name="group_name" class="form-control mb-2" placeholder="Όνομα ομάδας" required>
+                            <button type="submit" class="btn btn-primary btn-block">Δημιουργία</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-info text-white">Ανάθεση σε Ομάδα</div>
+                        <form action="index.php?action=addStudentToGroup" method="POST" class="card-body">
+                            <select name="student_id" class="form-control mb-2" required>
+                                <option value="">Επίλεξε Μαθητή</option>
+                                <?php foreach ($students as $s):
+                                    if (array_key_exists($s['studentId'], $assignments)) continue; ?>
+                                    <option value="<?php echo $s['studentId']; ?>">
+                                        <?php echo htmlspecialchars($s['name'] . ' ' . $s['lastName']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <select name="group_id" class="form-control mb-2" required>
+                                <option value="">Επίλεξε Ομάδα</option>
+                                <?php foreach ($groups as $g): ?>
+                                    <option value="<?php echo $g['id']; ?>"><?php echo htmlspecialchars($g['group_name']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <button type="submit" class="btn btn-info btn-block">Ανάθεση</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <?php if (empty($groups)): ?>
+                <div class="alert alert-secondary">Δεν υπάρχουν ακόμα ομάδες για αυτό το σχολικό έτος.</div>
+            <?php else: ?>
+                <h5 class="mt-2">Ομάδες &amp; Μέλη</h5>
+                <table class="table table-sm table-bordered bg-white shadow-sm">
+                    <thead class="thead-light">
+                        <tr>
+                            <th style="width:35%">Ομάδα</th>
+                            <th>Μέλη</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($groups as $g):
+                            $members = [];
+                            foreach ($students as $s) {
+                                if (isset($assignments[$s['studentId']]) && $assignments[$s['studentId']] == $g['id']) {
+                                    $members[] = $s;
+                                }
+                            }
+                        ?>
+                            <tr>
+                                <td class="align-middle">
+                                    <div class="d-flex align-items-center justify-content-between" id="group-label-<?php echo $g['id']; ?>">
+                                        <strong><?php echo htmlspecialchars($g['group_name']); ?></strong>
+                                        <button class="btn btn-sm btn-outline-secondary ml-2" onclick="showRenameForm(<?php echo $g['id']; ?>)">✏️</button>
+                                    </div>
+                                    <form action="index.php?action=renameGroup" method="POST" id="rename-form-<?php echo $g['id']; ?>" class="d-none mt-2">
+                                        <input type="hidden" name="group_id" value="<?php echo $g['id']; ?>">
+                                        <div class="input-group input-group-sm">
+                                            <input type="text" name="new_group_name" class="form-control" value="<?php echo htmlspecialchars($g['group_name']); ?>" required>
+                                            <div class="input-group-append">
+                                                <button type="submit" class="btn btn-success">✔</button>
+                                                <button type="button" class="btn btn-secondary" onclick="hideRenameForm(<?php echo $g['id']; ?>)">✖</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </td>
+                                <td>
+                                    <?php if (empty($members)): ?>
+                                        <span class="text-muted small">Κενή ομάδα</span>
+                                    <?php else: ?>
+                                        <ul class="list-unstyled mb-0 small">
+                                            <?php foreach ($members as $m): ?>
+                                                <li class="mb-1">
+                                                    <?php echo htmlspecialchars($m['name'] . ' ' . $m['lastName']); ?>
+                                                    <a href="index.php?action=removeStudentFromGroup&student_id=<?php echo $m['studentId']; ?>"
+                                                        class="text-danger ml-1"
+                                                        onclick="return confirm('Αφαίρεση από την ομάδα;')">✖</a>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php endif; ?>
+        </div>
+        <script>
+            function showRenameForm(id) {
+                document.getElementById('group-label-' + id).classList.add('d-none');
+                document.getElementById('rename-form-' + id).classList.remove('d-none');
+            }
+
+            function hideRenameForm(id) {
+                document.getElementById('group-label-' + id).classList.remove('d-none');
+                document.getElementById('rename-form-' + id).classList.add('d-none');
+            }
         </script>
 <?php
     }
